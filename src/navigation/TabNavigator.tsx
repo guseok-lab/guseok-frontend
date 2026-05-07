@@ -17,10 +17,12 @@ function TabIcon({ focused, emoji }: TabIconProps) {
 
 export default function TabNavigator() {
   return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
+      <Tab.Navigator
+          detachInactiveScreens={false}
+          screenOptions={{
+              headerShown: false,
+              freezeOnBlur: false,
+              tabBarStyle: {
           backgroundColor: "#ffffff",
           borderTopColor: "#f3f4f6",
           borderTopWidth: 1,

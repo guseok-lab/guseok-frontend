@@ -5,7 +5,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
 import TabNavigator from "./src/navigation/TabNavigator";
+import { enableFreeze } from "react-native-screens";
 
+enableFreeze(false);
 SplashScreen.preventAutoHideAsync();
 
 function AnimatedSplash({ onFinish }: { onFinish: () => void }) {
