@@ -5,7 +5,7 @@ export default function LogoInfoSection() {
     return (
         <View className="mt-2 mb-10">
             <Text className="text-bk text-lg font-bold mb-4">
-                Q. LOGO는 어떻게 만들어졌나요?
+                Q. 구석구석은 어떻게 만들어졌나요?
             </Text>
 
             <View className="w-full h-[145px] bg-gr200 items-center justify-center rounded-xl mb-4">
