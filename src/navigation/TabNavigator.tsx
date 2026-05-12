@@ -4,9 +4,9 @@ import { View } from "react-native";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
 
-import HomeScreen from "../screens/HomeScreen";
-import ExploreScreen from "../screens/ExploreScreen";
-import SettingsScreen from "../screens/SettingsScreen";
+import HomeScreen from "../features/home/screens/HomeScreen";
+import ExploreScreen from "../features/explore/screens/ExploreScreen";
+import SettingsScreen from "../features/setting/screens/SettingsScreen";
 
 import HomeIcon from "./assets/svg/Home.svg";
 import SearchIcon from "./assets/svg/Search.svg";
