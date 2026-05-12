@@ -17,7 +17,13 @@ const Tab = createBottomTabNavigator();
 const fullConfig = resolveConfig(tailwindConfig);
 const colors = fullConfig.theme.colors as any;
 
-function NormalTabIcon({ focused, Icon }: { focused: boolean; Icon: any }) {
+function NormalTabIcon({
+                           focused,
+                           Icon,
+                       }: {
+    focused: boolean;
+    Icon: any;
+}) {
     return (
         <Icon
             width={24}
@@ -30,14 +36,9 @@ function NormalTabIcon({ focused, Icon }: { focused: boolean; Icon: any }) {
 function SearchTabIcon({ focused }: { focused: boolean }) {
     return (
         <View
+            className="w-14 h-14 rounded-full items-center justify-center"
             style={{
-                width: 56,
-                height: 56,
-                borderRadius: 28,
                 backgroundColor: focused ? colors.bk : colors.gr200,
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: -18,
             }}
         >
             <SearchIcon width={26} height={26} color={colors.bg} />
@@ -52,12 +53,19 @@ export default function TabNavigator() {
             screenOptions={{
                 headerShown: false,
                 freezeOnBlur: false,
+
                 tabBarActiveTintColor: colors.bk,
                 tabBarInactiveTintColor: colors.gr200,
+
                 tabBarStyle: {
                     height: 90,
-                    overflow: "visible",
                     backgroundColor: colors.bg,
+                    position: "absolute",
+                    elevation: 0,
+                    overflow: "visible",
+                },
+                sceneStyle: {
+                    backgroundColor: "transparent",
                 },
             }}
         >
@@ -81,7 +89,10 @@ export default function TabNavigator() {
                 options={{
                     tabBarLabel: "EXPLORE",
                     tabBarLabelStyle: {
-                        marginTop: 12,
+                        marginTop: 14,
+                    },
+                    tabBarIconStyle: {
+                        marginTop: -10,
                     },
                     tabBarIcon: ({ focused }) => (
                         <SearchTabIcon focused={focused} />
