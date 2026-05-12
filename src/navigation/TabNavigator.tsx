@@ -1,68 +1,107 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text } from "react-native";
+import { View } from "react-native";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "../../tailwind.config";
+
 import HomeScreen from "../screens/HomeScreen";
 import ExploreScreen from "../screens/ExploreScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 
+import HomeIcon from "./assets/svg/Home.svg";
+import SearchIcon from "./assets/svg/Search.svg";
+import MyIcon from "./assets/svg/My.svg";
+
 const Tab = createBottomTabNavigator();
 
-type TabIconProps = { focused: boolean; emoji: string };
+const fullConfig = resolveConfig(tailwindConfig);
+const colors = fullConfig.theme.colors as any;
 
-function TabIcon({ focused, emoji }: TabIconProps) {
-  return (
-    <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.45 }}>{emoji}</Text>
-  );
+function NormalTabIcon({ focused, Icon }: { focused: boolean; Icon: any }) {
+    return (
+        <Icon
+            width={24}
+            height={24}
+            color={focused ? colors.bk : colors.gr200}
+        />
+    );
+}
+
+function SearchTabIcon({ focused }: { focused: boolean }) {
+    return (
+        <View
+            style={{
+                width: 56,
+                height: 56,
+                borderRadius: 28,
+                backgroundColor: focused ? colors.bk : colors.gr200,
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: -18,
+            }}
+        >
+            <SearchIcon width={26} height={26} color={colors.bg} />
+        </View>
+    );
 }
 
 export default function TabNavigator() {
-  return (
-      <Tab.Navigator
-          detachInactiveScreens={false}
-          screenOptions={{
-              headerShown: false,
-              freezeOnBlur: false,
-              tabBarStyle: {
-          backgroundColor: "#ffffff",
-          borderTopColor: "#f3f4f6",
-          borderTopWidth: 1,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 6,
-        },
-        tabBarActiveTintColor: "#6366f1",
-        tabBarInactiveTintColor: "#9ca3af",
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: "600",
-          marginTop: -2,
-        },
-      }}
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarLabel: "홈",
-          tabBarIcon: ({ focused }) => <TabIcon focused={focused} emoji="🏠" />,
-        }}
-      />
-      <Tab.Screen
-        name="Explore"
-        component={ExploreScreen}
-        options={{
-          tabBarLabel: "탐색",
-          tabBarIcon: ({ focused }) => <TabIcon focused={focused} emoji="🔍" />,
-        }}
-      />
-      <Tab.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{
-          tabBarLabel: "설정",
-          tabBarIcon: ({ focused }) => <TabIcon focused={focused} emoji="⚙️" />,
-        }}
-      />
-    </Tab.Navigator>
-  );
+    return (
+        <Tab.Navigator
+            detachInactiveScreens={false}
+            screenOptions={{
+                headerShown: false,
+                freezeOnBlur: false,
+                tabBarActiveTintColor: colors.bk,
+                tabBarInactiveTintColor: colors.gr200,
+                tabBarStyle: {
+                    height: 90,
+                    overflow: "visible",
+                    backgroundColor: colors.bg,
+                },
+            }}
+        >
+            <Tab.Screen
+                name="Home"
+                component={HomeScreen}
+                options={{
+                    tabBarLabel: "HOME",
+                    tabBarItemStyle: {
+                        paddingTop: 8,
+                    },
+                    tabBarIcon: ({ focused }) => (
+                        <NormalTabIcon focused={focused} Icon={HomeIcon} />
+                    ),
+                }}
+            />
+
+            <Tab.Screen
+                name="Explore"
+                component={ExploreScreen}
+                options={{
+                    tabBarLabel: "EXPLORE",
+                    tabBarLabelStyle: {
+                        marginTop: 12,
+                    },
+                    tabBarIcon: ({ focused }) => (
+                        <SearchTabIcon focused={focused} />
+                    ),
+                }}
+            />
+
+            <Tab.Screen
+                name="Settings"
+                component={SettingsScreen}
+                options={{
+                    tabBarLabel: "MY",
+                    tabBarItemStyle: {
+                        paddingTop: 8,
+                    },
+                    tabBarIcon: ({ focused }) => (
+                        <NormalTabIcon focused={focused} Icon={MyIcon} />
+                    ),
+                }}
+            />
+        </Tab.Navigator>
+    );
 }
