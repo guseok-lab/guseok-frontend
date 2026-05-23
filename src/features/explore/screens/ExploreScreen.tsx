@@ -3,7 +3,7 @@ import { Alert, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { StackNavigationProp } from "@react-navigation/stack";
 
 import ExploreHeader from "../components/ExploreHeader";
 import InfoInputRow from "../components/InfoInputRow";
@@ -15,7 +15,7 @@ import Section from "../components/Section";
 import type { RootStackParamList } from "../../../navigation/types";
 import type { MissingPersonForm } from "../../../types/missingPersonForm";
 
-type Nav = NativeStackNavigationProp<RootStackParamList>;
+type Nav = StackNavigationProp<RootStackParamList>;
 
 export default function ExploreScreen() {
     const navigation = useNavigation<Nav>();

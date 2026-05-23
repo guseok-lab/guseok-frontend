@@ -2,12 +2,12 @@ import React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { StackNavigationProp } from "@react-navigation/stack";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
 import type { RootStackParamList } from "../../../navigation/types";
 
-type Nav = NativeStackNavigationProp<RootStackParamList, "DroneConnect">;
+type Nav = StackNavigationProp<RootStackParamList, "DroneConnect">;
 type R = RouteProp<RootStackParamList, "DroneConnect">;
 
 export default function DroneConnectScreen() {

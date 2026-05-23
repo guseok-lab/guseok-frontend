@@ -3,12 +3,12 @@ import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { StackNavigationProp } from "@react-navigation/stack";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
 import type { RootStackParamList } from "../../../navigation/types";
 
-type Nav = NativeStackNavigationProp<RootStackParamList, "VideoUpload">;
+type Nav = StackNavigationProp<RootStackParamList, "VideoUpload">;
 type R = RouteProp<RootStackParamList, "VideoUpload">;
 
 export default function VideoUploadScreen() {
