@@ -20,13 +20,13 @@ export default function UploadRow({
             onPress={onPress}
             className="flex-row items-center justify-between bg-wh border border-gr200/40 rounded-xl px-4 h-12 mb-3"
         >
-            <Text className="text-bk text-sm font-semibold">
+            <Text className="text-bk text-base font-semibold">
                 {title}
             </Text>
 
             <View className="flex-row items-center">
                 <Text
-                    className={`text-sm ${
+                    className={`text-base ${
                         hasValue ? "text-primary400 font-semibold" : "text-gr200"
                     }`}
                 >

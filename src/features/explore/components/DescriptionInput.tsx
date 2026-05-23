@@ -18,7 +18,7 @@ export default function DescriptionInput({
                                          }: DescriptionInputProps) {
     return (
         <View className="mb-3">
-            <Text className="text-bk text-sm font-semibold mb-2">
+            <Text className="text-bk text-base font-semibold mb-2">
                 {title}
             </Text>
 
@@ -30,7 +30,7 @@ export default function DescriptionInput({
                 placeholder={placeholder}
                 placeholderTextColor="#B2B2B2"
                 style={{ minHeight }}
-                className="bg-wh border border-gr200/40 rounded-xl px-4 py-3 text-bk text-sm leading-5"
+                className="bg-wh border border-gr200/40 rounded-xl px-4 py-3 text-bk text-base leading-6"
             />
         </View>
     );

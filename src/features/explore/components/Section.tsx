@@ -18,7 +18,7 @@ export default function Section({
                 isLast ? "" : "border-b border-gr200/40"
             }`}
         >
-            <Text className="text-bk text-base font-bold mb-4">
+            <Text className="text-bk text-lg font-bold mb-4">
                 {title}
             </Text>
             {children}
