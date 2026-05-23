@@ -12,7 +12,7 @@ export default function DescriptionInput({
                                          }: DescriptionInputProps) {
     return (
         <View className="mt-5">
-            <Text className="text-bk text-[16px] font-semibold mb-3">
+            <Text className="text-bk text-base font-semibold mb-3">
                 인상착의
             </Text>
 
@@ -23,7 +23,7 @@ export default function DescriptionInput({
                 onChangeText={onChangeText}
                 placeholder="인상착의를 입력해주세요"
                 placeholderTextColor="#B2B2B2"
-                className="h-[116px] border border-gr200 rounded-xl px-4 py-4 text-bk text-[14px]"
+                className="h-[116px] bg-wh border border-gr200 rounded-xl px-4 py-4 text-bk text-sm leading-5"
             />
         </View>
     );

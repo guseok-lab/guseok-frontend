@@ -16,7 +16,7 @@ export default function RadioGroup({
                                    }: RadioGroupProps) {
     return (
         <View className="flex-row items-center mb-4">
-            <Text className="w-[80px] text-bk text-[16px] font-semibold">
+            <Text className="w-[80px] text-bk text-base font-semibold">
                 {label}
             </Text>
 
@@ -31,9 +31,18 @@ export default function RadioGroup({
                             onPress={() => onChange(option)}
                             className="flex-row items-center"
                         >
-                            <Text className="text-bk text-base mr-2">
-                                {selected ? "●" : "○"}
-                            </Text>
+                            <View
+                                className={`w-5 h-5 rounded-full border-2 mr-2 items-center justify-center ${
+                                    selected
+                                        ? "border-primary400 bg-primary100"
+                                        : "border-gr200 bg-wh"
+                                }`}
+                            >
+                                {selected && (
+                                    <View className="w-2.5 h-2.5 rounded-full bg-primary400" />
+                                )}
+                            </View>
+
                             <Text className="text-bk text-base font-semibold">
                                 {option}
                             </Text>

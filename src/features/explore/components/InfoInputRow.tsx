@@ -17,25 +17,25 @@ export default function InfoInputRow({
                                          unit,
                                      }: InfoInputRowProps) {
     return (
-        <View className="flex-row items-center mb-4">
-            <Text className="w-[80px] text-bk text-[16px] font-semibold">
+        <View className="flex-row items-center mb-3">
+            <Text className="w-[80px] text-bk text-base font-semibold">
                 {label}
             </Text>
 
-            <TextInput
-                value={value}
-                onChangeText={onChangeText}
-                placeholder={placeholder}
-                maxLength={3}
-                keyboardType="number-pad"
-                className="w-[80px] h-12 border-b border-gr200 px-2 text-bk text-[15px]"
-            />
-
-            {unit && (
-                <Text className="text-bk text-base font-semibold ml-2">
-                    {unit}
-                </Text>
-            )}
+            <View className="flex-row items-center bg-wh border border-gr200 rounded-xl px-3 h-11 w-[110px]">
+                <TextInput
+                    value={value}
+                    onChangeText={onChangeText}
+                    placeholder={placeholder}
+                    placeholderTextColor="#B2B2B2"
+                    maxLength={3}
+                    keyboardType="number-pad"
+                    className="flex-1 text-bk text-[15px]"
+                />
+                {unit && (
+                    <Text className="text-gr200 text-sm ml-1">{unit}</Text>
+                )}
+            </View>
         </View>
     );
 }
