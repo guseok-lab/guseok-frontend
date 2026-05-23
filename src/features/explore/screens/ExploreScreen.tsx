@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { Alert, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation } from "@react-navigation/native";
-import type { StackNavigationProp } from "@react-navigation/stack";
 
 import ExploreHeader from "../components/ExploreHeader";
 import InfoInputRow from "../components/InfoInputRow";
@@ -12,13 +10,8 @@ import UploadRow from "../components/UploadRow";
 import NextButton from "../components/NextButton";
 import DescriptionInput from "../components/DescriptionInput";
 import Section from "../components/Section";
-import type { RootStackParamList } from "../../../navigation/types";
-import type { MissingPersonForm } from "../../../types/missingPersonForm";
-
-type Nav = StackNavigationProp<RootStackParamList>;
 
 export default function ExploreScreen() {
-    const navigation = useNavigation<Nav>();
 
     const [name, setName] = useState("");
     const [age, setAge] = useState("");
@@ -75,25 +68,10 @@ export default function ExploreScreen() {
 
     const handleNext = () => {
         if (!isFormValid) return;
-
-        const formData: MissingPersonForm = {
-            name,
-            age,
-            gender: gender!,
-            height,
-            weight,
-            bodyType: bodyType!,
-            appearance,
-            photoUri: photoUri!,
-            lastLocation,
-            circumstance,
-        };
-
-        if (searchMethod === "영상첨부") {
-            navigation.navigate("VideoUpload", { formData });
-        } else if (searchMethod === "드론연결") {
-            navigation.navigate("DroneConnect", { formData });
-        }
+        Alert.alert(
+            "다음",
+            `선택: ${searchMethod}\n(상세 화면 라우팅은 임시 비활성화)`,
+        );
     };
 
     return (
