@@ -16,7 +16,7 @@ export default function RadioGroup({
                                    }: RadioGroupProps) {
     return (
         <View className="flex-row items-center mb-4">
-            <Text className="w-[80px] text-bk text-base font-semibold">
+            <Text className="w-[90px] text-bk text-lg font-semibold">
                 {label}
             </Text>
 
@@ -43,7 +43,7 @@ export default function RadioGroup({
                                 )}
                             </View>
 
-                            <Text className="text-bk text-base font-semibold">
+                            <Text className="text-bk text-lg font-semibold">
                                 {option}
                             </Text>
                         </TouchableOpacity>

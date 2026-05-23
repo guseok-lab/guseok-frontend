@@ -21,7 +21,7 @@ export default function NextButton({
             }`}
         >
             <Text
-                className={`text-base font-bold ${
+                className={`text-lg font-bold ${
                     disabled ? "text-gr200" : "text-bk"
                 }`}
             >
