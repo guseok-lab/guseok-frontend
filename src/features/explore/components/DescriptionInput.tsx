@@ -2,18 +2,24 @@ import React from "react";
 import { Text, TextInput, View } from "react-native";
 
 interface DescriptionInputProps {
+    title?: string;
     value: string;
     onChangeText: (text: string) => void;
+    placeholder?: string;
+    minHeight?: number;
 }
 
 export default function DescriptionInput({
+                                             title = "인상착의",
                                              value,
                                              onChangeText,
+                                             placeholder = "인상착의를 입력해주세요",
+                                             minHeight = 116,
                                          }: DescriptionInputProps) {
     return (
-        <View className="mt-5">
-            <Text className="text-bk text-[16px] font-semibold mb-3">
-                인상착의
+        <View className="mb-3">
+            <Text className="text-bk text-base font-semibold mb-2">
+                {title}
             </Text>
 
             <TextInput
@@ -21,9 +27,18 @@ export default function DescriptionInput({
                 textAlignVertical="top"
                 value={value}
                 onChangeText={onChangeText}
-                placeholder="인상착의를 입력해주세요"
+                placeholder={placeholder}
                 placeholderTextColor="#B2B2B2"
-                className="h-[116px] border border-gr200 rounded-xl px-4 py-4 text-bk text-[14px]"
+                style={{
+                    minHeight,
+                    color: "#000000",
+                    fontSize: 16,
+                    lineHeight: 22,
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    includeFontPadding: false,
+                }}
+                className="bg-wh border border-gr200/40 rounded-xl"
             />
         </View>
     );

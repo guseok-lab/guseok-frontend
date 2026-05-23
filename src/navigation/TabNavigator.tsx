@@ -28,7 +28,7 @@ function NormalTabIcon({
         <Icon
             width={24}
             height={24}
-            color={focused ? colors.bk : colors.gr200}
+            color={focused ? colors.primary400 : colors.gr200}
         />
     );
 }
@@ -38,10 +38,10 @@ function SearchTabIcon({ focused }: { focused: boolean }) {
         <View
             className="w-14 h-14 rounded-full items-center justify-center"
             style={{
-                backgroundColor: focused ? colors.bk : colors.gr200,
+                backgroundColor: focused ? colors.primary400 : colors.gr200,
             }}
         >
-            <SearchIcon width={26} height={26} color={colors.bg} />
+            <SearchIcon width={26} height={26} color={colors.primary400} />
         </View>
     );
 }
@@ -54,12 +54,12 @@ export default function TabNavigator() {
                 headerShown: false,
                 freezeOnBlur: false,
 
-                tabBarActiveTintColor: colors.bk,
+                tabBarActiveTintColor: colors.primary400,
                 tabBarInactiveTintColor: colors.gr200,
 
                 tabBarStyle: {
                     height: 90,
-                    backgroundColor: colors.bg,
+                    backgroundColor: colors.wh,
                     position: "absolute",
                     elevation: 0,
                     overflow: "visible",

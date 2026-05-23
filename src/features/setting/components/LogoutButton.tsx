@@ -1,15 +1,19 @@
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Pressable, Text } from "react-native";
 
-export default function LogoutButton() {
+interface LogoutButtonProps {
+    onPress?: () => void;
+}
+
+export default function LogoutButton({ onPress }: LogoutButtonProps) {
     return (
-        <TouchableOpacity
-            activeOpacity={0.7}
-            className="items-center mt-[180px] mb-10"
+        <Pressable
+            onPress={onPress}
+            className="items-center justify-center mt-8 py-3"
         >
-            <Text className="text-gr200 text-[18px]">
+            <Text className="text-gr200 text-base underline">
                 로그아웃
             </Text>
-        </TouchableOpacity>
+        </Pressable>
     );
 }
