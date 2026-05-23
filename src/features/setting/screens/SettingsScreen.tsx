@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Modal, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+    SafeAreaProvider,
+    SafeAreaView,
+} from "react-native-safe-area-context";
 
 import SettingsHeader from "../components/SettingsHeader";
 import ProfileSection from "../components/ProfileSection";
@@ -12,6 +15,7 @@ import PreRegisterScreen from "./PreRegisterScreen";
 import FaqScreen from "./FaqScreen";
 import TermsScreen from "./TermsScreen";
 import NotificationSettingScreen from "./NotificationSettingScreen";
+import SwipeBackWrapper from "../../../navigation/components/SwipeBackWrapper";
 
 type DetailRoute = "PreRegister" | "Faq" | "Terms" | "NotificationSetting";
 
@@ -55,16 +59,24 @@ export default function SettingsScreen() {
                 visible={activeDetail !== null}
                 animationType="slide"
                 onRequestClose={close}
-                presentationStyle="fullScreen"
+                presentationStyle="pageSheet"
             >
-                {activeDetail === "PreRegister" && (
-                    <PreRegisterScreen onClose={close} />
-                )}
-                {activeDetail === "Faq" && <FaqScreen onClose={close} />}
-                {activeDetail === "Terms" && <TermsScreen onClose={close} />}
-                {activeDetail === "NotificationSetting" && (
-                    <NotificationSettingScreen onClose={close} />
-                )}
+                <SafeAreaProvider>
+                    <SwipeBackWrapper onClose={close}>
+                        {activeDetail === "PreRegister" && (
+                            <PreRegisterScreen onClose={close} />
+                        )}
+                        {activeDetail === "Faq" && (
+                            <FaqScreen onClose={close} />
+                        )}
+                        {activeDetail === "Terms" && (
+                            <TermsScreen onClose={close} />
+                        )}
+                        {activeDetail === "NotificationSetting" && (
+                            <NotificationSettingScreen onClose={close} />
+                        )}
+                    </SwipeBackWrapper>
+                </SafeAreaProvider>
             </Modal>
         </SafeAreaView>
     );
