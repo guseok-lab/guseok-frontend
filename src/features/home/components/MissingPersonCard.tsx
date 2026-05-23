@@ -1,55 +1,56 @@
 import React from "react";
 import { Text, View } from "react-native";
 
+import type { MissingPerson } from "../../../mocks/missingPersonMockData";
+import InfoRow from "./InfoRow";
+import MissingDayBadge from "./MissingDayBadge";
+import ReportButton from "./ReportButton";
+import RulerIcon from "../assets/svg/Length.svg"
+import TshirtIcon from "../assets/svg/T-Shirt.svg"
+import MapIcon from "../assets/svg/Address.svg"
+import TimeIcon from "../assets/svg/Clock.svg"
+
 interface MissingPersonCardProps {
-    item: {
-        id: number;
-        name: string;
-        age: number;
-        gender: string;
-        height: number;
-        weight: number;
-        description: string;
-        phone: string;
-    };
-    reverse: boolean;
+    item: MissingPerson;
 }
 
-export default function MissingPersonCard({
-                                              item,
-                                              reverse,
-                                          }: MissingPersonCardProps) {
+export default function MissingPersonCard({ item }: MissingPersonCardProps) {
     return (
-        <View
-            className={`flex-row items-start mb-6 ${
-                reverse ? "flex-row-reverse" : ""
-            }`}
-        >
-            <View className="w-[148px] h-[148px] bg-gr200" />
+        <View className="flex-row items-stretch mb-6">
+            <View className="w-[140px] rounded-xl bg-gr200 mr-4" />
 
-            <View
-                className={`flex-1 ${
-                    reverse ? "mr-4 items-end" : "ml-4 items-start"
-                }`}
-            >
-                <Text className="text-bk text-sm font-bold">
-                    {item.name} / {String(item.age).padStart(2, "0")}세
+            <View className="flex-1">
+                <View className="items-end mb-2">
+                    <MissingDayBadge days={item.missingDays} />
+                </View>
+
+                <Text className="text-bk text-xl font-bold mb-3">
+                    {item.name}{" "}
+                    <Text className="text-bk text-base font-normal">
+                        ({item.age}세 / {item.gender})
+                    </Text>
                 </Text>
 
-                <Text className="text-bk text-sm mt-2">
-                    {item.gender} / {item.height}cm /{" "}
-                    {String(item.weight).padStart(2, "0")}kg
-                </Text>
+                <InfoRow
+                    icon={<RulerIcon width={20} height={20} className="color-gr700" />}
+                    value={`${item.height}cm  ${item.weight}kg | ${item.bodyType}`}
+                />
 
-                <Text
-                    className={`text-bk text-sm mt-2 leading-5 ${
-                        reverse ? "text-right" : "text-left"
-                    }`}
-                >
-                    {item.description}
-                </Text>
+                <InfoRow
+                    icon={<TshirtIcon width={20} height={20} className="color-gr700" />}
+                    value={item.appearance} />
 
-                <Text className="text-bk text-sm mt-2">{item.phone}</Text>
+                <InfoRow
+                    icon={<MapIcon width={20} height={20} className="color-gr700" />}
+                    label="마지막 위치"
+                    value={item.lastLocation}
+                />
+
+                <InfoRow
+                    icon={<TimeIcon width={20} height={20} className="color-gr700" />}
+                    label="실종 경위" value={item.circumstance} />
+
+                <ReportButton />
             </View>
         </View>
     );

@@ -1,24 +1,32 @@
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Pressable, Text } from "react-native";
 
 interface NextButtonProps {
     title: string;
     onPress: () => void;
+    disabled?: boolean;
 }
 
 export default function NextButton({
                                        title,
                                        onPress,
+                                       disabled = false,
                                    }: NextButtonProps) {
     return (
-        <TouchableOpacity
-            activeOpacity={0.8}
+        <Pressable
             onPress={onPress}
-            className="h-12 bg-bk items-center justify-center mt-12 rounded-full"
+            disabled={disabled}
+            className={`h-12 items-center justify-center mt-8 rounded-xl ${
+                disabled ? "bg-gr100" : "bg-primary"
+            }`}
         >
-            <Text className="text-white text-[16px] font-semibold">
+            <Text
+                className={`text-lg font-bold ${
+                    disabled ? "text-gr200" : "text-bk"
+                }`}
+            >
                 {title}
             </Text>
-        </TouchableOpacity>
+        </Pressable>
     );
 }

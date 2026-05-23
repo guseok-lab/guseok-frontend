@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TextInput, View } from "react-native";
+import { KeyboardTypeOptions, Text, TextInput, View } from "react-native";
 
 interface InfoInputRowProps {
     label: string;
@@ -7,7 +7,19 @@ interface InfoInputRowProps {
     onChangeText: (text: string) => void;
     placeholder?: string;
     unit?: string;
+    keyboardType?: KeyboardTypeOptions;
+    maxLength?: number;
+    fill?: boolean;
 }
+
+const inputBaseStyle = {
+    flex: 1,
+    padding: 0,
+    margin: 0,
+    color: "#000000",
+    fontSize: 16,
+    includeFontPadding: false as const,
+};
 
 export default function InfoInputRow({
                                          label,
@@ -15,27 +27,54 @@ export default function InfoInputRow({
                                          onChangeText,
                                          placeholder,
                                          unit,
+                                         keyboardType = "default",
+                                         maxLength,
+                                         fill = false,
                                      }: InfoInputRowProps) {
+    if (fill) {
+        return (
+            <View className="mb-3">
+                <Text className="text-bk text-base font-semibold mb-2">
+                    {label}
+                </Text>
+                <View className="flex-row items-center bg-wh border border-gr200/40 rounded-xl px-3 h-12">
+                    <TextInput
+                        value={value}
+                        onChangeText={onChangeText}
+                        placeholder={placeholder}
+                        placeholderTextColor="#B2B2B2"
+                        maxLength={maxLength}
+                        keyboardType={keyboardType}
+                        style={inputBaseStyle}
+                    />
+                    {unit && (
+                        <Text className="text-gr200 text-base ml-1">{unit}</Text>
+                    )}
+                </View>
+            </View>
+        );
+    }
+
     return (
-        <View className="flex-row items-center mb-4">
-            <Text className="w-[80px] text-bk text-[16px] font-semibold">
+        <View className="flex-row items-center mb-3">
+            <Text className="w-[90px] text-bk text-lg font-semibold">
                 {label}
             </Text>
 
-            <TextInput
-                value={value}
-                onChangeText={onChangeText}
-                placeholder={placeholder}
-                maxLength={3}
-                keyboardType="number-pad"
-                className="w-[80px] h-12 border-b border-gr200 px-2 text-bk text-[15px]"
-            />
-
-            {unit && (
-                <Text className="text-bk text-base font-semibold ml-2">
-                    {unit}
-                </Text>
-            )}
+            <View className="flex-row items-center bg-wh border border-gr200/40 rounded-xl px-3 h-12 w-[130px]">
+                <TextInput
+                    value={value}
+                    onChangeText={onChangeText}
+                    placeholder={placeholder}
+                    placeholderTextColor="#B2B2B2"
+                    maxLength={maxLength}
+                    keyboardType={keyboardType}
+                    style={inputBaseStyle}
+                />
+                {unit && (
+                    <Text className="text-gr200 text-base ml-1">{unit}</Text>
+                )}
+            </View>
         </View>
     );
 }
