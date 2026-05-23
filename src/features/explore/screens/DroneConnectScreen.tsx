@@ -1,23 +1,24 @@
 import React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import type { StackNavigationProp } from "@react-navigation/stack";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
-import type { RootStackParamList } from "../../../navigation/types";
+import type { MissingPersonForm } from "../../../types/missingPersonForm";
 
-type Nav = StackNavigationProp<RootStackParamList, "DroneConnect">;
-type R = RouteProp<RootStackParamList, "DroneConnect">;
+interface DroneConnectScreenProps {
+    formData: MissingPersonForm;
+    onClose: () => void;
+    onNext: () => void;
+}
 
-export default function DroneConnectScreen() {
-    const navigation = useNavigation<Nav>();
-    const route = useRoute<R>();
-    const { formData } = route.params;
-
+export default function DroneConnectScreen({
+                                               formData,
+                                               onClose,
+                                               onNext,
+                                           }: DroneConnectScreenProps) {
     return (
         <SafeAreaView className="flex-1 bg-bg">
-            <DetailHeader title="드론 연결" />
+            <DetailHeader title="드론 연결" onBack={onClose} />
 
             <ScrollView
                 className="flex-1 px-5"
@@ -58,7 +59,7 @@ export default function DroneConnectScreen() {
                 </View>
 
                 <Pressable
-                    onPress={() => navigation.navigate("DroneCamera", { formData })}
+                    onPress={onNext}
                     className="h-12 items-center justify-center rounded-xl bg-primary"
                 >
                     <Text className="text-bk text-lg font-bold">다음</Text>

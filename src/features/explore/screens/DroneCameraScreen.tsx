@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { RouteProp, useRoute } from "@react-navigation/native";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
-import type { RootStackParamList } from "../../../navigation/types";
+import type { MissingPersonForm } from "../../../types/missingPersonForm";
 
-type R = RouteProp<RootStackParamList, "DroneCamera">;
+interface DroneCameraScreenProps {
+    formData: MissingPersonForm;
+    onClose: () => void;
+}
 
 interface Region {
     latitude: number;
@@ -29,10 +31,10 @@ try {
     Location = require("expo-location");
 } catch {}
 
-export default function DroneCameraScreen() {
-    const route = useRoute<R>();
-    const { formData } = route.params;
-
+export default function DroneCameraScreen({
+                                              formData,
+                                              onClose,
+                                          }: DroneCameraScreenProps) {
     const [region, setRegion] = useState<Region | null>(null);
     const hasNativeMap = !!MapView && !!Location;
 
@@ -62,7 +64,7 @@ export default function DroneCameraScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-bg">
-            <DetailHeader />
+            <DetailHeader onBack={onClose} />
 
             <View className="flex-1 px-5 pb-4">
                 <View className="w-full h-[36%] rounded-xl bg-gr200/40 items-center justify-center mb-4 overflow-hidden">
