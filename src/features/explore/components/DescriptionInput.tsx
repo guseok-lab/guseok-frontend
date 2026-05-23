@@ -29,8 +29,16 @@ export default function DescriptionInput({
                 onChangeText={onChangeText}
                 placeholder={placeholder}
                 placeholderTextColor="#B2B2B2"
-                style={{ minHeight }}
-                className="bg-wh border border-gr200/40 rounded-xl px-4 py-3 text-bk text-base leading-6"
+                style={{
+                    minHeight,
+                    color: "#000000",
+                    fontSize: 16,
+                    lineHeight: 22,
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    includeFontPadding: false,
+                }}
+                className="bg-wh border border-gr200/40 rounded-xl"
             />
         </View>
     );

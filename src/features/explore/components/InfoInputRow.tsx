@@ -12,6 +12,15 @@ interface InfoInputRowProps {
     fill?: boolean;
 }
 
+const inputBaseStyle = {
+    flex: 1,
+    padding: 0,
+    margin: 0,
+    color: "#000000",
+    fontSize: 16,
+    includeFontPadding: false as const,
+};
+
 export default function InfoInputRow({
                                          label,
                                          value,
@@ -36,7 +45,7 @@ export default function InfoInputRow({
                         placeholderTextColor="#B2B2B2"
                         maxLength={maxLength}
                         keyboardType={keyboardType}
-                        className="flex-1 text-bk text-base"
+                        style={inputBaseStyle}
                     />
                     {unit && (
                         <Text className="text-gr200 text-base ml-1">{unit}</Text>
@@ -60,7 +69,7 @@ export default function InfoInputRow({
                     placeholderTextColor="#B2B2B2"
                     maxLength={maxLength}
                     keyboardType={keyboardType}
-                    className="flex-1 text-bk text-base"
+                    style={inputBaseStyle}
                 />
                 {unit && (
                     <Text className="text-gr200 text-base ml-1">{unit}</Text>
