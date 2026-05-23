@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { Alert, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Alert, Modal, ScrollView } from "react-native";
+import {
+    SafeAreaProvider,
+    SafeAreaView,
+} from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 
 import ExploreHeader from "../components/ExploreHeader";
@@ -11,8 +14,16 @@ import NextButton from "../components/NextButton";
 import DescriptionInput from "../components/DescriptionInput";
 import Section from "../components/Section";
 
-export default function ExploreScreen() {
+import VideoUploadScreen from "./VideoUploadScreen";
+import AIResultScreen from "./AIResultScreen";
+import DroneConnectScreen from "./DroneConnectScreen";
+import DroneCameraScreen from "./DroneCameraScreen";
+import SwipeBackWrapper from "../../../navigation/components/SwipeBackWrapper";
+import type { MissingPersonForm } from "../../../types/missingPersonForm";
 
+type Flow = "video" | "drone";
+
+export default function ExploreScreen() {
     const [name, setName] = useState("");
     const [age, setAge] = useState("");
     const [gender, setGender] = useState<"남" | "여" | null>(null);
@@ -32,6 +43,9 @@ export default function ExploreScreen() {
     const [searchMethod, setSearchMethod] = useState<
         "영상첨부" | "드론연결" | null
     >(null);
+
+    const [activeFlow, setActiveFlow] = useState<Flow | null>(null);
+    const [flowStep, setFlowStep] = useState<1 | 2>(1);
 
     const isFormValid =
         name.trim() !== "" &&
@@ -68,11 +82,36 @@ export default function ExploreScreen() {
 
     const handleNext = () => {
         if (!isFormValid) return;
-        Alert.alert(
-            "다음",
-            `선택: ${searchMethod}\n(상세 화면 라우팅은 임시 비활성화)`,
-        );
+        setFlowStep(1);
+        setActiveFlow(searchMethod === "영상첨부" ? "video" : "drone");
     };
+
+    const closeFlow = () => {
+        setActiveFlow(null);
+        setFlowStep(1);
+    };
+
+    const goBack = () => {
+        if (flowStep > 1) setFlowStep((flowStep - 1) as 1);
+        else closeFlow();
+    };
+
+    const goNext = () => setFlowStep(2);
+
+    const formData: MissingPersonForm | null = isFormValid
+        ? {
+            name,
+            age,
+            gender: gender!,
+            height,
+            weight,
+            bodyType: bodyType!,
+            appearance,
+            photoUri: photoUri!,
+            lastLocation,
+            circumstance,
+        }
+        : null;
 
     return (
         <SafeAreaView className="flex-1 bg-bg">
@@ -180,6 +219,52 @@ export default function ExploreScreen() {
                     disabled={!isFormValid}
                 />
             </ScrollView>
+
+            <Modal
+                visible={activeFlow !== null && formData !== null}
+                animationType="slide"
+                onRequestClose={closeFlow}
+                presentationStyle="pageSheet"
+            >
+                <SafeAreaProvider>
+                    <SwipeBackWrapper onClose={goBack}>
+                        {activeFlow === "video" &&
+                            flowStep === 1 &&
+                            formData && (
+                                <VideoUploadScreen
+                                    formData={formData}
+                                    onClose={goBack}
+                                    onNext={goNext}
+                                />
+                            )}
+                        {activeFlow === "video" &&
+                            flowStep === 2 &&
+                            formData && (
+                                <AIResultScreen
+                                    formData={formData}
+                                    onClose={goBack}
+                                />
+                            )}
+                        {activeFlow === "drone" &&
+                            flowStep === 1 &&
+                            formData && (
+                                <DroneConnectScreen
+                                    formData={formData}
+                                    onClose={goBack}
+                                    onNext={goNext}
+                                />
+                            )}
+                        {activeFlow === "drone" &&
+                            flowStep === 2 &&
+                            formData && (
+                                <DroneCameraScreen
+                                    formData={formData}
+                                    onClose={goBack}
+                                />
+                            )}
+                    </SwipeBackWrapper>
+                </SafeAreaProvider>
+            </Modal>
         </SafeAreaView>
     );
 }

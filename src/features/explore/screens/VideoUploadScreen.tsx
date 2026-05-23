@@ -2,20 +2,21 @@ import React, { useState } from "react";
 import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import type { StackNavigationProp } from "@react-navigation/stack";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
-import type { RootStackParamList } from "../../../navigation/types";
+import type { MissingPersonForm } from "../../../types/missingPersonForm";
 
-type Nav = StackNavigationProp<RootStackParamList, "VideoUpload">;
-type R = RouteProp<RootStackParamList, "VideoUpload">;
+interface VideoUploadScreenProps {
+    formData: MissingPersonForm;
+    onClose: () => void;
+    onNext: () => void;
+}
 
-export default function VideoUploadScreen() {
-    const navigation = useNavigation<Nav>();
-    const route = useRoute<R>();
-    const { formData } = route.params;
-
+export default function VideoUploadScreen({
+                                              formData,
+                                              onClose,
+                                              onNext,
+                                          }: VideoUploadScreenProps) {
     const [videoUri, setVideoUri] = useState<string | null>(null);
     const [videoThumb, setVideoThumb] = useState<string | null>(null);
 
@@ -37,13 +38,9 @@ export default function VideoUploadScreen() {
         }
     };
 
-    const handleNext = () => {
-        navigation.navigate("AIResult", { formData });
-    };
-
     return (
         <SafeAreaView className="flex-1 bg-bg">
-            <DetailHeader title="영상 첨부" />
+            <DetailHeader title="영상 첨부" onBack={onClose} />
 
             <ScrollView
                 className="flex-1 px-5"
@@ -101,7 +98,7 @@ export default function VideoUploadScreen() {
                 </View>
 
                 <Pressable
-                    onPress={handleNext}
+                    onPress={onNext}
                     disabled={!videoUri}
                     className={`h-12 items-center justify-center rounded-xl ${
                         videoUri ? "bg-primary" : "bg-gr200/30"

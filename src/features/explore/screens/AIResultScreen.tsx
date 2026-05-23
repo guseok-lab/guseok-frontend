@@ -1,20 +1,24 @@
 import React from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { RouteProp, useRoute } from "@react-navigation/native";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
-import type { RootStackParamList } from "../../../navigation/types";
+import type { MissingPersonForm } from "../../../types/missingPersonForm";
 
-type R = RouteProp<RootStackParamList, "AIResult">;
+interface AIResultScreenProps {
+    formData: MissingPersonForm;
+    capturedUri?: string;
+    onClose: () => void;
+}
 
-export default function AIResultScreen() {
-    const route = useRoute<R>();
-    const { formData, capturedUri } = route.params;
-
+export default function AIResultScreen({
+                                           formData,
+                                           capturedUri,
+                                           onClose,
+                                       }: AIResultScreenProps) {
     return (
         <SafeAreaView className="flex-1 bg-bg">
-            <DetailHeader title="AI 분석 결과" />
+            <DetailHeader title="AI 분석 결과" onBack={onClose} />
 
             <ScrollView
                 className="flex-1 px-5"
