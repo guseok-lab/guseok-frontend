@@ -76,7 +76,7 @@ export default function LoginScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-bg">
-            <View className="flex-1 px-5 items-center pt-20">
+            <View className="flex-1 px-5 items-center justify-center pb-16">
                 <Text className="text-bk text-base mb-10">
                     로그인을 통해 구석구석 회원이 되어보세요
                 </Text>
