@@ -17,6 +17,9 @@ import TermsScreen from "./TermsScreen";
 import NotificationSettingScreen from "./NotificationSettingScreen";
 import SwipeBackWrapper from "../../../navigation/components/SwipeBackWrapper";
 
+import LoginScreen from "../../auth/LoginScreen";
+import { useAuth } from "../../auth/AuthContext";
+
 type DetailRoute = "PreRegister" | "Faq" | "Terms" | "NotificationSetting";
 
 const menus: { id: number; title: string; route: DetailRoute }[] = [
@@ -27,8 +30,13 @@ const menus: { id: number; title: string; route: DetailRoute }[] = [
 ];
 
 export default function SettingsScreen() {
+    const { isAuthenticated, user, signOut } = useAuth();
     const [activeDetail, setActiveDetail] = useState<DetailRoute | null>(null);
     const close = () => setActiveDetail(null);
+
+    if (!isAuthenticated) {
+        return <LoginScreen />;
+    }
 
     return (
         <SafeAreaView className="flex-1 bg-bg">
@@ -39,7 +47,10 @@ export default function SettingsScreen() {
             >
                 <SettingsHeader />
 
-                <ProfileSection />
+                <ProfileSection
+                    name={user?.nickname ?? "회원"}
+                    description="오늘도 함께 찾아주셔서 감사해요"
+                />
 
                 <MenuSection>
                     {menus.map((menu, idx) => (
@@ -52,7 +63,7 @@ export default function SettingsScreen() {
                     ))}
                 </MenuSection>
 
-                <LogoutButton />
+                <LogoutButton onPress={signOut} />
             </ScrollView>
 
             <Modal
@@ -66,12 +77,8 @@ export default function SettingsScreen() {
                         {activeDetail === "PreRegister" && (
                             <PreRegisterScreen onClose={close} />
                         )}
-                        {activeDetail === "Faq" && (
-                            <FaqScreen onClose={close} />
-                        )}
-                        {activeDetail === "Terms" && (
-                            <TermsScreen onClose={close} />
-                        )}
+                        {activeDetail === "Faq" && <FaqScreen onClose={close} />}
+                        {activeDetail === "Terms" && <TermsScreen onClose={close} />}
                         {activeDetail === "NotificationSetting" && (
                             <NotificationSettingScreen onClose={close} />
                         )}
