@@ -14,7 +14,7 @@ export default function ReportButton({ onPress }: ReportButtonProps) {
         >
             <CallIcon width={20} height={20} className="color-gr700" />
 
-            <Text className="text-bk text-md font-bold">제보하기</Text>
+            <Text className="text-bk text-lg font-bold">제보하기</Text>
         </Pressable>
     );
 }

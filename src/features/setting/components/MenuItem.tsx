@@ -20,11 +20,11 @@ export default function MenuItem({
                 isLast ? "" : "border-b border-gr200/40"
             }`}
         >
-            <Text className="text-bk text-sm font-medium">
+            <Text className="text-bk text-base font-medium">
                 {title}
             </Text>
 
-            <Text className="text-gr200 text-lg font-medium">
+            <Text className="text-gr200 text-xl font-medium">
                 ›
             </Text>
         </TouchableOpacity>

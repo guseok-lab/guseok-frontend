@@ -14,9 +14,9 @@ export default function SearchStatusBanner({ count }: SearchStatusBannerProps) {
                 <NotificationIcon width={22} height={22} color="#FFFFFF" />
             </View>
 
-            <Text className="text-bk text-base font-semibold">
+            <Text className="text-bk text-lg font-semibold">
                 현재 탐색 중인 실종자{" "}
-                <Text className="text-primary400 text-lg font-bold">{count}명</Text>
+                <Text className="text-primary400 text-xl font-bold">{count}명</Text>
             </Text>
         </View>
     );
