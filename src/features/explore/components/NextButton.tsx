@@ -20,7 +20,11 @@ export default function NextButton({
                 disabled ? "bg-gr100" : "bg-primary"
             }`}
         >
-            <Text className="text-bk text-base font-bold">
+            <Text
+                className={`text-base font-bold ${
+                    disabled ? "text-gr200" : "text-bk"
+                }`}
+            >
                 {title}
             </Text>
         </Pressable>
