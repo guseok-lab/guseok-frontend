@@ -10,7 +10,7 @@ export default function MenuSection({ title, children }: MenuSectionProps) {
     return (
         <View className="mb-4">
             {title ? (
-                <Text className="text-gr200 text-xs font-semibold mb-2 px-1">
+                <Text className="text-gr200 text-sm font-semibold mb-2 px-1">
                     {title}
                 </Text>
             ) : null}

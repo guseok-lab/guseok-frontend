@@ -24,9 +24,9 @@ export default function MissingPersonCard({ item }: MissingPersonCardProps) {
                     <MissingDayBadge days={item.missingDays} />
                 </View>
 
-                <Text className="text-bk text-lg font-bold mb-3">
+                <Text className="text-bk text-xl font-bold mb-3">
                     {item.name}{" "}
-                    <Text className="text-bk text-sm font-normal">
+                    <Text className="text-bk text-base font-normal">
                         ({item.age}세 / {item.gender})
                     </Text>
                 </Text>

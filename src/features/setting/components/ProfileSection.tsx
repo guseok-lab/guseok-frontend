@@ -17,8 +17,8 @@ export default function ProfileSection({
             </View>
 
             <View className="flex-1">
-                <Text className="text-bk text-lg font-bold">{name}</Text>
-                <Text className="text-gr200 text-sm mt-1 leading-5">
+                <Text className="text-bk text-xl font-bold">{name}</Text>
+                <Text className="text-gr200 text-base mt-1 leading-6">
                     {description}
                 </Text>
             </View>

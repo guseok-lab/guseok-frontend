@@ -11,7 +11,7 @@ export default function LogoutButton({ onPress }: LogoutButtonProps) {
             onPress={onPress}
             className="items-center justify-center mt-8 py-3"
         >
-            <Text className="text-gr200 text-sm underline">
+            <Text className="text-gr200 text-base underline">
                 로그아웃
             </Text>
         </Pressable>

@@ -16,9 +16,9 @@ export default function InfoRow({ label, value, icon }: InfoRowProps) {
 
             <View className="flex-1">
                 {label ? (
-                    <Text className="text-gr200 text-xs">{label}</Text>
+                    <Text className="text-gr200 text-sm">{label}</Text>
                 ) : null}
-                <Text className="text-bk text-sm leading-5">{value}</Text>
+                <Text className="text-bk text-base leading-6">{value}</Text>
             </View>
         </View>
     );
