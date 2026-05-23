@@ -11,7 +11,11 @@ import UploadRow from "../../explore/components/UploadRow";
 import DescriptionInput from "../../explore/components/DescriptionInput";
 import ConfirmModal from "../components/ConfirmModal";
 
-export default function PreRegisterScreen() {
+interface PreRegisterScreenProps {
+    onClose?: () => void;
+}
+
+export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
     const [name, setName] = useState("");
     const [age, setAge] = useState("");
     const [gender, setGender] = useState<"남" | "여" | null>(null);
@@ -85,7 +89,7 @@ export default function PreRegisterScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-bg">
-            <DetailHeader title="실종자 사전 등록" />
+            <DetailHeader title="실종자 사전 등록" onBack={onClose} />
 
             <ScrollView
                 className="flex-1 px-5"

@@ -4,6 +4,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
 
+interface FaqScreenProps {
+    onClose?: () => void;
+}
+
 const faqs = [
     {
         q: "구석구석은 어떤 서비스인가요?",
@@ -27,10 +31,10 @@ const faqs = [
     },
 ];
 
-export default function FaqScreen() {
+export default function FaqScreen({ onClose }: FaqScreenProps) {
     return (
         <SafeAreaView className="flex-1 bg-bg">
-            <DetailHeader title="자주 묻는 질문" />
+            <DetailHeader title="자주 묻는 질문" onBack={onClose} />
 
             <ScrollView
                 className="flex-1 px-5"
