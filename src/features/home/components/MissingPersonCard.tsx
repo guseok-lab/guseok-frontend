@@ -16,8 +16,8 @@ interface MissingPersonCardProps {
 
 export default function MissingPersonCard({ item }: MissingPersonCardProps) {
     return (
-        <View className="flex-row mb-6">
-            <View className="w-[140px] h-[260px] rounded-xl bg-gr200 mr-4" />
+        <View className="flex-row items-stretch mb-6">
+            <View className="w-[140px] rounded-xl bg-gr200 mr-4" />
 
             <View className="flex-1">
                 <View className="items-end mb-2">
