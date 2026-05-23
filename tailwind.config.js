@@ -14,6 +14,7 @@ module.exports = {
         primary300: "#FDD54B",
         primary400: "#FBB80E",
         bk:"#000000",
+        gr100:"#E1E1E1",
         gr200:"#B2B2B2",
         gr700:"#292A29",
         point:"#E21010",
