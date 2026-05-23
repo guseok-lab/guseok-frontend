@@ -83,8 +83,6 @@ export default function ExploreScreen() {
                         label="이름"
                         value={name}
                         onChangeText={setName}
-                        placeholder="이름을 입력해주세요"
-                        fill
                     />
                     <InfoInputRow
                         label="나이"
@@ -128,11 +126,12 @@ export default function ExploreScreen() {
                 </Section>
 
                 <Section title="인상착의">
-                    <DescriptionInput
-                        title="인상착의"
+                    <InfoInputRow
+                        label="인상착의"
                         value={appearance}
                         onChangeText={setAppearance}
                         placeholder="옷차림, 머리 스타일 등을 입력해주세요"
+                        fill
                     />
                     <UploadRow
                         title="사진 첨부"
