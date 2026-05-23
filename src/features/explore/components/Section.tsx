@@ -14,9 +14,11 @@ export default function Section({
                                 }: SectionProps) {
     return (
         <View
-            className={`mb-6 pb-6 ${
-                isLast ? "" : "border-b border-gr200/40"
-            }`}
+            className={
+                isLast
+                    ? ""
+                    : "mb-6 pb-6 border-b border-gr200/40"
+            }
         >
             <Text className="text-bk text-lg font-bold mb-4">
                 {title}
