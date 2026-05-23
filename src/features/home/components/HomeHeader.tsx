@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Image,Text, View } from "react-native";
 
 export default function HomeHeader() {
     return (
@@ -15,8 +15,13 @@ export default function HomeHeader() {
                 </Text>
             </View>
 
-            <View className="w-24 h-24 rounded-full bg-primary100 items-center justify-center">
-
+            <View className="w-28 h-28">
+                <View className="absolute inset-0 rounded-full bg-primary100" />
+                <Image
+                    source={require("../assets/png/Icon.png")}
+                    className="w-32 h-32 absolute -top-3 -left-8"
+                    resizeMode="contain"
+                />
             </View>
         </View>
     );
