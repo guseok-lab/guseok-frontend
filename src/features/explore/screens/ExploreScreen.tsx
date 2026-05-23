@@ -32,6 +32,19 @@ export default function ExploreScreen() {
         "영상첨부" | "드론연결" | null
     >(null);
 
+    const isFormValid =
+        name.trim() !== "" &&
+        age.trim() !== "" &&
+        gender !== null &&
+        height.trim() !== "" &&
+        weight.trim() !== "" &&
+        bodyType !== null &&
+        appearance.trim() !== "" &&
+        photoUri !== null &&
+        lastLocation.trim() !== "" &&
+        circumstance.trim() !== "" &&
+        searchMethod !== null;
+
     const handlePickPhoto = async () => {
         const permission =
             await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -144,7 +157,7 @@ export default function ExploreScreen() {
                     />
                 </Section>
 
-                <Section title="탐색 방식">
+                <Section title="탐색 방식" isLast>
                     <RadioGroup
                         label="선택"
                         value={searchMethod}
@@ -153,7 +166,11 @@ export default function ExploreScreen() {
                     />
                 </Section>
 
-                <NextButton title="다음" onPress={() => {}} />
+                <NextButton
+                    title="다음"
+                    onPress={() => {}}
+                    disabled={!isFormValid}
+                />
             </ScrollView>
         </SafeAreaView>
     );
