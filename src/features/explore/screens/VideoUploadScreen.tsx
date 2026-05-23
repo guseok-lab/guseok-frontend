@@ -11,22 +11,13 @@ import type { RootStackParamList } from "../../../navigation/types";
 type Nav = NativeStackNavigationProp<RootStackParamList, "VideoUpload">;
 type R = RouteProp<RootStackParamList, "VideoUpload">;
 
-// expo-av는 SDK 54에서 deprecated 이고 native 환경에 따라 import 시 에러를 던질 수 있어
-// lazy require로 보호. 영상 미리보기가 안 되어도 첨부 자체는 동작.
-let Video: any = null;
-let ResizeMode: any = { COVER: "cover" };
-try {
-    const av = require("expo-av");
-    Video = av.Video;
-    ResizeMode = av.ResizeMode;
-} catch {}
-
 export default function VideoUploadScreen() {
     const navigation = useNavigation<Nav>();
     const route = useRoute<R>();
     const { formData } = route.params;
 
     const [videoUri, setVideoUri] = useState<string | null>(null);
+    const [videoThumb, setVideoThumb] = useState<string | null>(null);
 
     const handlePickVideo = async () => {
         const permission =
@@ -40,7 +31,9 @@ export default function VideoUploadScreen() {
             quality: 0.8,
         });
         if (!result.canceled) {
-            setVideoUri(result.assets[0].uri);
+            const asset = result.assets[0];
+            setVideoUri(asset.uri);
+            setVideoThumb(asset.uri);
         }
     };
 
@@ -66,20 +59,18 @@ export default function VideoUploadScreen() {
                     className="h-52 rounded-xl bg-gr200/30 items-center justify-center mb-6 overflow-hidden"
                 >
                     {videoUri ? (
-                        Video ? (
-                            <Video
-                                source={{ uri: videoUri }}
-                                useNativeControls
-                                resizeMode={ResizeMode.COVER}
-                                style={{ width: "100%", height: "100%" }}
-                            />
-                        ) : (
-                            <Image
-                                source={{ uri: videoUri }}
-                                className="w-full h-full"
-                                resizeMode="cover"
-                            />
-                        )
+                        <View className="w-full h-full items-center justify-center bg-bk">
+                            {videoThumb ? (
+                                <Image
+                                    source={{ uri: videoThumb }}
+                                    className="w-full h-full opacity-60"
+                                    resizeMode="cover"
+                                />
+                            ) : null}
+                            <Text className="absolute text-wh text-base font-semibold">
+                                ▶ 영상 첨부됨
+                            </Text>
+                        </View>
                     ) : (
                         <>
                             <Text className="text-gr200 text-base">
