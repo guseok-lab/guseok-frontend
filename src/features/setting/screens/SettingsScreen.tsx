@@ -2,7 +2,7 @@ import React from "react";
 import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { StackNavigationProp } from "@react-navigation/stack";
 
 import SettingsHeader from "../components/SettingsHeader";
 import ProfileSection from "../components/ProfileSection";
@@ -11,7 +11,7 @@ import MenuItem from "../components/MenuItem";
 import LogoutButton from "../components/LogoutButton";
 import type { RootStackParamList } from "../../../navigation/types";
 
-type Nav = NativeStackNavigationProp<RootStackParamList>;
+type Nav = StackNavigationProp<RootStackParamList>;
 
 const menus: { id: number; title: string; route: keyof RootStackParamList }[] =
     [

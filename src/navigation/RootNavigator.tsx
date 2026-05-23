@@ -1,5 +1,5 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import TabNavigator from "./TabNavigator";
 import type { RootStackParamList } from "./types";
@@ -14,7 +14,7 @@ import DroneConnectScreen from "../features/explore/screens/DroneConnectScreen";
 import DroneCameraScreen from "../features/explore/screens/DroneCameraScreen";
 import AIResultScreen from "../features/explore/screens/AIResultScreen";
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
     return (
