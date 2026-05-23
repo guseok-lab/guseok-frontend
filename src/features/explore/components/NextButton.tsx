@@ -17,7 +17,7 @@ export default function NextButton({
             onPress={onPress}
             disabled={disabled}
             className={`h-12 items-center justify-center mt-10 rounded-xl ${
-                disabled ? "bg-gr200" : "bg-primary"
+                disabled ? "bg-gr100" : "bg-primary"
             }`}
         >
             <Text className="text-bk text-base font-bold">
