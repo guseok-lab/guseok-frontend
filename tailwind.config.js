@@ -9,12 +9,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#FFC300",
-        secondary: "#8b5cf6",
+        primary: "#FDD54B",
+        primary100: "#FDF6DB",
+        primary300: "#FDD54B",
+        primary400: "#FBB80E",
         bk:"#000000",
         gr200:"#B2B2B2",
-        point:"#DF0000",
-        bg:"#FFFFFF"
+        gr700:"#292A29",
+        point:"#E21010",
+        point100:"#FDE9E9",
+        point200:"#EFABAB",
+        bg:"#FCFCFC",
+        wh:"#FFFFFF"
       },
     },
   },
