@@ -76,23 +76,21 @@ export default function LoginScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-bg">
-            <View className="flex-1 px-5 items-center justify-between pt-24 pb-10">
-                <View className="items-center">
-                    <Text className="text-bk text-base mb-12">
-                        로그인을 통해 구석구석 회원이 되어보세요
-                    </Text>
+            <View className="flex-1 px-5 items-center pt-20">
+                <Text className="text-bk text-base mb-10">
+                    로그인을 통해 구석구석 회원이 되어보세요
+                </Text>
 
-                    <Image
-                        source={require("../setting/assets/png/Icon2.png")}
-                        className="w-64 h-64"
-                        resizeMode="contain"
-                    />
-                </View>
+                <Image
+                    source={require("../setting/assets/png/Icon2.png")}
+                    className="w-64 h-64"
+                    resizeMode="contain"
+                />
 
                 <Pressable
                     disabled={!request}
                     onPress={handleKakaoLogin}
-                    className="w-full h-12 rounded-xl items-center justify-center"
+                    className="w-full h-12 rounded-xl items-center justify-center mt-12"
                     style={{ backgroundColor: "#FEE500" }}
                 >
                     <Text className="text-bk text-base font-semibold">
