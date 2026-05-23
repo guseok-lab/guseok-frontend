@@ -4,12 +4,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
 
-export default function NotificationSettingScreen() {
+interface NotificationSettingScreenProps {
+    onClose?: () => void;
+}
+
+export default function NotificationSettingScreen({
+                                                      onClose,
+                                                  }: NotificationSettingScreenProps) {
     const [enabled, setEnabled] = useState(true);
 
     return (
         <SafeAreaView className="flex-1 bg-bg">
-            <DetailHeader title="알림 설정" />
+            <DetailHeader title="알림 설정" onBack={onClose} />
 
             <View className="px-5 pt-4">
                 <View className="flex-row items-center justify-between bg-wh border border-gr200/40 rounded-xl px-4 h-14">

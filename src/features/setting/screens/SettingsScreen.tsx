@@ -1,28 +1,30 @@
-import React from "react";
-import { ScrollView } from "react-native";
+import React, { useState } from "react";
+import { Modal, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
-import type { StackNavigationProp } from "@react-navigation/stack";
 
 import SettingsHeader from "../components/SettingsHeader";
 import ProfileSection from "../components/ProfileSection";
 import MenuSection from "../components/MenuSection";
 import MenuItem from "../components/MenuItem";
 import LogoutButton from "../components/LogoutButton";
-import type { RootStackParamList } from "../../../navigation/types";
 
-type Nav = StackNavigationProp<RootStackParamList>;
+import PreRegisterScreen from "./PreRegisterScreen";
+import FaqScreen from "./FaqScreen";
+import TermsScreen from "./TermsScreen";
+import NotificationSettingScreen from "./NotificationSettingScreen";
 
-const menus: { id: number; title: string; route: keyof RootStackParamList }[] =
-    [
-        { id: 1, title: "실종자 사전 등록", route: "PreRegister" },
-        { id: 2, title: "자주 묻는 질문", route: "Faq" },
-        { id: 3, title: "이용 약관", route: "Terms" },
-        { id: 4, title: "알림 설정", route: "NotificationSetting" },
-    ];
+type DetailRoute = "PreRegister" | "Faq" | "Terms" | "NotificationSetting";
+
+const menus: { id: number; title: string; route: DetailRoute }[] = [
+    { id: 1, title: "실종자 사전 등록", route: "PreRegister" },
+    { id: 2, title: "자주 묻는 질문", route: "Faq" },
+    { id: 3, title: "이용 약관", route: "Terms" },
+    { id: 4, title: "알림 설정", route: "NotificationSetting" },
+];
 
 export default function SettingsScreen() {
-    const navigation = useNavigation<Nav>();
+    const [activeDetail, setActiveDetail] = useState<DetailRoute | null>(null);
+    const close = () => setActiveDetail(null);
 
     return (
         <SafeAreaView className="flex-1 bg-bg">
@@ -40,9 +42,7 @@ export default function SettingsScreen() {
                         <MenuItem
                             key={menu.id}
                             title={menu.title}
-                            onPress={() =>
-                                navigation.navigate(menu.route as never)
-                            }
+                            onPress={() => setActiveDetail(menu.route)}
                             isLast={idx === menus.length - 1}
                         />
                     ))}
@@ -50,6 +50,22 @@ export default function SettingsScreen() {
 
                 <LogoutButton />
             </ScrollView>
+
+            <Modal
+                visible={activeDetail !== null}
+                animationType="slide"
+                onRequestClose={close}
+                presentationStyle="fullScreen"
+            >
+                {activeDetail === "PreRegister" && (
+                    <PreRegisterScreen onClose={close} />
+                )}
+                {activeDetail === "Faq" && <FaqScreen onClose={close} />}
+                {activeDetail === "Terms" && <TermsScreen onClose={close} />}
+                {activeDetail === "NotificationSetting" && (
+                    <NotificationSettingScreen onClose={close} />
+                )}
+            </Modal>
         </SafeAreaView>
     );
 }

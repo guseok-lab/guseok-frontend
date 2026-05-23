@@ -4,6 +4,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
 
+interface TermsScreenProps {
+    onClose?: () => void;
+}
+
 const sections = [
     {
         title: "제1조 (목적)",
@@ -36,10 +40,10 @@ const sections = [
     },
 ];
 
-export default function TermsScreen() {
+export default function TermsScreen({ onClose }: TermsScreenProps) {
     return (
         <SafeAreaView className="flex-1 bg-bg">
-            <DetailHeader title="이용 약관" />
+            <DetailHeader title="이용 약관" onBack={onClose} />
 
             <ScrollView
                 className="flex-1 px-5"

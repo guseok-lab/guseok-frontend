@@ -1,19 +1,17 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 
 interface DetailHeaderProps {
     title?: string;
+    onBack?: () => void;
 }
 
-export default function DetailHeader({ title }: DetailHeaderProps) {
-    const navigation = useNavigation();
-
+export default function DetailHeader({ title, onBack }: DetailHeaderProps) {
     return (
         <View className="flex-row items-center h-12 px-2">
             <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={() => navigation.goBack()}
+                onPress={onBack}
                 className="w-10 h-10 items-center justify-center"
             >
                 <Text className="text-bk text-2xl">‹</Text>
