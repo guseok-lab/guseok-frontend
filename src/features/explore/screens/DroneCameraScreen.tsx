@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as Location from "expo-location";
-import MapView, { Marker } from "react-native-maps";
 import { RouteProp, useRoute } from "@react-navigation/native";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
@@ -17,13 +15,29 @@ interface Region {
     longitudeDelta: number;
 }
 
+// Expo Go에는 react-native-maps / expo-location native module이 없어
+// 모듈 레벨 import 시 native bridge 에러가 날 수 있어 lazy require 처리.
+let MapView: any = null;
+let Marker: any = null;
+let Location: any = null;
+try {
+    const maps = require("react-native-maps");
+    MapView = maps.default;
+    Marker = maps.Marker;
+} catch {}
+try {
+    Location = require("expo-location");
+} catch {}
+
 export default function DroneCameraScreen() {
     const route = useRoute<R>();
     const { formData } = route.params;
 
     const [region, setRegion] = useState<Region | null>(null);
+    const hasNativeMap = !!MapView && !!Location;
 
     useEffect(() => {
+        if (!hasNativeMap) return;
         (async () => {
             try {
                 const { status } =
@@ -42,11 +56,9 @@ export default function DroneCameraScreen() {
                     latitudeDelta: 0.01,
                     longitudeDelta: 0.01,
                 });
-            } catch (e) {
-                // 시뮬레이터 등 위치 조회 불가 시 무시 (placeholder 유지)
-            }
+            } catch {}
         })();
-    }, []);
+    }, [hasNativeMap]);
 
     return (
         <SafeAreaView className="flex-1 bg-bg">
@@ -63,7 +75,7 @@ export default function DroneCameraScreen() {
                 </View>
 
                 <View className="flex-1 rounded-xl overflow-hidden bg-gr200/40">
-                    {region ? (
+                    {hasNativeMap && region ? (
                         <MapView
                             style={{ flex: 1 }}
                             initialRegion={region}
@@ -83,8 +95,10 @@ export default function DroneCameraScreen() {
                             <Text className="text-bk text-lg font-semibold">
                                 지도
                             </Text>
-                            <Text className="text-gr200 text-xs mt-1">
-                                위치 권한을 허용하면 표시됩니다
+                            <Text className="text-gr200 text-xs mt-1 px-4 text-center leading-5">
+                                {hasNativeMap
+                                    ? "위치 권한을 허용하면 표시됩니다"
+                                    : "Expo Go에서는 지도가 표시되지 않습니다.\ndevelopment build에서 활성화됩니다."}
                             </Text>
                         </View>
                     )}
