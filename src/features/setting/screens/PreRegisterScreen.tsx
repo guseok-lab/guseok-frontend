@@ -1,25 +1,17 @@
 import React, { useState } from "react";
-import { Alert, ScrollView } from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import ExploreHeader from "../components/ExploreHeader";
-import InfoInputRow from "../components/InfoInputRow";
-import RadioGroup from "../components/RadioGroup";
-import UploadRow from "../components/UploadRow";
-import NextButton from "../components/NextButton";
-import DescriptionInput from "../components/DescriptionInput";
-import Section from "../components/Section";
-import type { RootStackParamList } from "../../../navigation/types";
-import type { MissingPersonForm } from "../../../types/missingPersonForm";
+import DetailHeader from "../../../navigation/components/DetailHeader";
+import Section from "../../explore/components/Section";
+import InfoInputRow from "../../explore/components/InfoInputRow";
+import RadioGroup from "../../explore/components/RadioGroup";
+import UploadRow from "../../explore/components/UploadRow";
+import DescriptionInput from "../../explore/components/DescriptionInput";
+import ConfirmModal from "../components/ConfirmModal";
 
-type Nav = NativeStackNavigationProp<RootStackParamList>;
-
-export default function ExploreScreen() {
-    const navigation = useNavigation<Nav>();
-
+export default function PreRegisterScreen() {
     const [name, setName] = useState("");
     const [age, setAge] = useState("");
     const [gender, setGender] = useState<"남" | "여" | null>(null);
@@ -36,11 +28,21 @@ export default function ExploreScreen() {
     const [lastLocation, setLastLocation] = useState("");
     const [circumstance, setCircumstance] = useState("");
 
-    const [searchMethod, setSearchMethod] = useState<
-        "영상첨부" | "드론연결" | null
-    >(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
-    const isFormValid =
+    const hasAny =
+        name.trim() !== "" ||
+        age.trim() !== "" ||
+        gender !== null ||
+        height.trim() !== "" ||
+        weight.trim() !== "" ||
+        bodyType !== null ||
+        appearance.trim() !== "" ||
+        photoUri !== null ||
+        lastLocation.trim() !== "" ||
+        circumstance.trim() !== "";
+
+    const isAllValid =
         name.trim() !== "" &&
         age.trim() !== "" &&
         gender !== null &&
@@ -50,65 +52,46 @@ export default function ExploreScreen() {
         appearance.trim() !== "" &&
         photoUri !== null &&
         lastLocation.trim() !== "" &&
-        circumstance.trim() !== "" &&
-        searchMethod !== null;
+        circumstance.trim() !== "";
 
     const handlePickPhoto = async () => {
         const permission =
             await ImagePicker.requestMediaLibraryPermissionsAsync();
-
         if (!permission.granted) {
-            Alert.alert("권한 필요", "사진 첨부를 위해 사진 접근 권한이 필요합니다.");
+            Alert.alert("권한 필요", "사진 첨부를 위해 권한이 필요합니다.");
             return;
         }
-
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
             quality: 0.8,
         });
-
         if (!result.canceled) {
             setPhotoUri(result.assets[0].uri);
         }
     };
 
-    const handleNext = () => {
-        if (!isFormValid) return;
+    const handleSaveDraft = () => {
+        Alert.alert("임시 저장되었습니다");
+    };
 
-        const formData: MissingPersonForm = {
-            name,
-            age,
-            gender: gender!,
-            height,
-            weight,
-            bodyType: bodyType!,
-            appearance,
-            photoUri: photoUri!,
-            lastLocation,
-            circumstance,
-        };
+    const handlePublish = () => {
+        setModalVisible(true);
+    };
 
-        if (searchMethod === "영상첨부") {
-            navigation.navigate("VideoUpload", { formData });
-        } else if (searchMethod === "드론연결") {
-            navigation.navigate("DroneConnect", { formData });
-        }
+    const handleConfirm = () => {
+        setModalVisible(false);
+        Alert.alert("등록되었습니다", "홈 화면에 노출됩니다.");
     };
 
     return (
         <SafeAreaView className="flex-1 bg-bg">
+            <DetailHeader title="실종자 사전 등록" />
+
             <ScrollView
                 className="flex-1 px-5"
-                contentContainerClassName="pt-4 pb-32"
+                contentContainerClassName="pt-2 pb-32"
                 showsVerticalScrollIndicator={false}
             >
-                <ExploreHeader
-                    title="실종자를 함께 찾아요"
-                    highlight="실종자"
-                    subtitle="찾고자 하는 사람의 정보를 입력해주세요"
-                />
-
                 <Section title="기본 정보">
                     <InfoInputRow
                         label="이름"
@@ -171,7 +154,7 @@ export default function ExploreScreen() {
                     />
                 </Section>
 
-                <Section title="실종 정황">
+                <Section title="실종 정황" isLast>
                     <InfoInputRow
                         label="마지막 위치"
                         value={lastLocation}
@@ -187,21 +170,57 @@ export default function ExploreScreen() {
                     />
                 </Section>
 
-                <Section title="탐색 방식" isLast>
-                    <RadioGroup
-                        label="선택"
-                        value={searchMethod}
-                        options={["영상첨부", "드론연결"]}
-                        onChange={setSearchMethod}
-                    />
-                </Section>
+                <Text className="text-bk text-sm leading-5 mt-6">
+                    실종되었다면 홈화면 노출 버튼을 눌러주세요{"\n"}
+                    구석구석 홈 화면에 작성 내용이 노출돼요
+                </Text>
 
-                <NextButton
-                    title="다음"
-                    onPress={handleNext}
-                    disabled={!isFormValid}
-                />
+                <View className="flex-row gap-3 mt-4">
+                    <Pressable
+                        onPress={handlePublish}
+                        disabled={!isAllValid}
+                        className={`flex-1 h-12 items-center justify-center rounded-xl ${
+                            isAllValid ? "bg-primary" : "bg-gr200/30"
+                        }`}
+                    >
+                        <Text
+                            className={`text-base font-bold ${
+                                isAllValid ? "text-bk" : "text-gr200"
+                            }`}
+                        >
+                            홈화면 노출
+                        </Text>
+                    </Pressable>
+
+                    <Pressable
+                        onPress={handleSaveDraft}
+                        disabled={!hasAny}
+                        className={`flex-1 h-12 items-center justify-center rounded-xl border ${
+                            hasAny
+                                ? "border-primary bg-wh"
+                                : "border-gr200/40 bg-gr200/10"
+                        }`}
+                    >
+                        <Text
+                            className={`text-base font-bold ${
+                                hasAny ? "text-bk" : "text-gr200"
+                            }`}
+                        >
+                            임시 저장
+                        </Text>
+                    </Pressable>
+                </View>
             </ScrollView>
+
+            <ConfirmModal
+                visible={modalVisible}
+                photoUri={photoUri}
+                name={name}
+                age={age}
+                appearance={appearance}
+                onConfirm={handleConfirm}
+                onClose={() => setModalVisible(false)}
+            />
         </SafeAreaView>
     );
 }
