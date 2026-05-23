@@ -16,7 +16,7 @@ export default function NextButton({
         <Pressable
             onPress={onPress}
             disabled={disabled}
-            className={`h-12 items-center justify-center mt-10 rounded-xl ${
+            className={`h-12 items-center justify-center mt-8 rounded-xl ${
                 disabled ? "bg-gr100" : "bg-primary"
             }`}
         >
