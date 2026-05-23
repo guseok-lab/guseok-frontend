@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
-import { ResizeMode, Video } from "expo-av";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -11,6 +10,16 @@ import type { RootStackParamList } from "../../../navigation/types";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "VideoUpload">;
 type R = RouteProp<RootStackParamList, "VideoUpload">;
+
+// expo-av는 SDK 54에서 deprecated 이고 native 환경에 따라 import 시 에러를 던질 수 있어
+// lazy require로 보호. 영상 미리보기가 안 되어도 첨부 자체는 동작.
+let Video: any = null;
+let ResizeMode: any = { COVER: "cover" };
+try {
+    const av = require("expo-av");
+    Video = av.Video;
+    ResizeMode = av.ResizeMode;
+} catch {}
 
 export default function VideoUploadScreen() {
     const navigation = useNavigation<Nav>();
@@ -57,12 +66,20 @@ export default function VideoUploadScreen() {
                     className="h-52 rounded-xl bg-gr200/30 items-center justify-center mb-6 overflow-hidden"
                 >
                     {videoUri ? (
-                        <Video
-                            source={{ uri: videoUri }}
-                            useNativeControls
-                            resizeMode={ResizeMode.COVER}
-                            style={{ width: "100%", height: "100%" }}
-                        />
+                        Video ? (
+                            <Video
+                                source={{ uri: videoUri }}
+                                useNativeControls
+                                resizeMode={ResizeMode.COVER}
+                                style={{ width: "100%", height: "100%" }}
+                            />
+                        ) : (
+                            <Image
+                                source={{ uri: videoUri }}
+                                className="w-full h-full"
+                                resizeMode="cover"
+                            />
+                        )
                     ) : (
                         <>
                             <Text className="text-gr200 text-base">
