@@ -18,9 +18,9 @@ export default function UploadRow({
         <TouchableOpacity
             activeOpacity={0.7}
             onPress={onPress}
-            className="flex-row items-center justify-between bg-wh border border-gr200 rounded-xl px-4 h-12 mt-5"
+            className="flex-row items-center justify-between bg-wh border border-gr200/40 rounded-xl px-4 h-12 mb-3"
         >
-            <Text className="text-bk text-base font-semibold">
+            <Text className="text-bk text-sm font-semibold">
                 {title}
             </Text>
 
