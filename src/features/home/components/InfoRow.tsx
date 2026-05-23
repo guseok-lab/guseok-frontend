@@ -4,14 +4,13 @@ import { Text, View } from "react-native";
 interface InfoRowProps {
     label?: string;
     value: ReactNode;
-    /** 아이콘 자리 (추후 SVG 에셋 교체) */
     icon?: ReactNode;
 }
 
 export default function InfoRow({ label, value, icon }: InfoRowProps) {
     return (
         <View className="flex-row items-start mb-2">
-            <View className="w-5 h-5 rounded-md bg-gr200/30 items-center justify-center mr-2 mt-0.5">
+            <View className="w-5 h-5 items-center justify-center mr-2 mb-1">
                 {icon}
             </View>
 

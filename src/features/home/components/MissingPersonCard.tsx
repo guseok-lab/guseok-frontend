@@ -5,6 +5,10 @@ import type { MissingPerson } from "../../../mocks/missingPersonMockData";
 import InfoRow from "./InfoRow";
 import MissingDayBadge from "./MissingDayBadge";
 import ReportButton from "./ReportButton";
+import RulerIcon from "../assets/svg/Length.svg"
+import TshirtIcon from "../assets/svg/T-Shirt.svg"
+import MapIcon from "../assets/svg/Address.svg"
+import TimeIcon from "../assets/svg/Clock.svg"
 
 interface MissingPersonCardProps {
     item: MissingPerson;
@@ -13,8 +17,7 @@ interface MissingPersonCardProps {
 export default function MissingPersonCard({ item }: MissingPersonCardProps) {
     return (
         <View className="flex-row mb-6">
-            {/* 사진 자리 (이미지 에셋 추후 추가) */}
-            <View className="w-[140px] h-[260px] rounded-xl bg-gr200/40 mr-4" />
+            <View className="w-[140px] h-[260px] rounded-xl bg-gr200 mr-4" />
 
             <View className="flex-1">
                 <View className="items-end mb-2">
@@ -29,17 +32,23 @@ export default function MissingPersonCard({ item }: MissingPersonCardProps) {
                 </Text>
 
                 <InfoRow
+                    icon={<RulerIcon width={20} height={20} className="color-gr700" />}
                     value={`${item.height}cm  ${item.weight}kg | ${item.bodyType}`}
                 />
 
-                <InfoRow value={item.appearance} />
+                <InfoRow
+                    icon={<TshirtIcon width={20} height={20} className="color-gr700" />}
+                    value={item.appearance} />
 
                 <InfoRow
+                    icon={<MapIcon width={20} height={20} className="color-gr700" />}
                     label="마지막 위치"
                     value={item.lastLocation}
                 />
 
-                <InfoRow label="실종 경위" value={item.circumstance} />
+                <InfoRow
+                    icon={<TimeIcon width={20} height={20} className="color-gr700" />}
+                    label="실종 경위" value={item.circumstance} />
 
                 <ReportButton />
             </View>
