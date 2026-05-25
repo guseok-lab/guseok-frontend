@@ -18,8 +18,6 @@ export default function LoginScreen() {
         try {
             await signInWithKakao();
         } catch (e: any) {
-            // 사용자가 로그인 시트를 직접 닫으면 카카오 SDK 가 cancel 류의 에러를 던지므로
-            // 알림으로 띄우지 않고 무시.
             const code = e?.code ?? e?.userInfo?.code;
             if (code === "E_CANCELLED_OPERATION" || code === "USER_CANCELLED") {
                 return;

@@ -119,7 +119,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             try {
                 await logoutBackend(tokens.refreshToken);
             } catch {
-                // 서버 로그아웃 실패해도 로컬 세션은 정리한다.
             }
         }
         await logoutFromKakao();
