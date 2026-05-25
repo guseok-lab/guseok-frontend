@@ -7,6 +7,7 @@ import type { MissingPersonForm } from "../../../types/missingPersonForm";
 
 interface DroneCameraScreenProps {
     formData: MissingPersonForm;
+    searchId: number;
     onClose: () => void;
 }
 
@@ -33,6 +34,7 @@ try {
 
 export default function DroneCameraScreen({
                                               formData,
+                                              searchId: _searchId,
                                               onClose,
                                           }: DroneCameraScreenProps) {
     const [region, setRegion] = useState<Region | null>(null);

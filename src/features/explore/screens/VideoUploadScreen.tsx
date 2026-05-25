@@ -1,24 +1,47 @@
 import React, { useState } from "react";
-import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
+import {
+    ActivityIndicator,
+    Alert,
+    Image,
+    Pressable,
+    ScrollView,
+    Text,
+    View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
 import type { MissingPersonForm } from "../../../types/missingPersonForm";
 
+import {
+    completeVideoUpload,
+    getVideoUploadUrl,
+} from "../../../api/searches";
+import {
+    basenameFromUri,
+    guessContentType,
+    uploadToPresignedUrl,
+} from "../../../lib/upload";
+
 interface VideoUploadScreenProps {
     formData: MissingPersonForm;
+    searchId: number;
     onClose: () => void;
     onNext: () => void;
 }
 
 export default function VideoUploadScreen({
                                               formData,
+                                              searchId,
                                               onClose,
                                               onNext,
                                           }: VideoUploadScreenProps) {
     const [videoUri, setVideoUri] = useState<string | null>(null);
     const [videoThumb, setVideoThumb] = useState<string | null>(null);
+    const [videoName, setVideoName] = useState<string>("video.mp4");
+    const [videoMime, setVideoMime] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
 
     const handlePickVideo = async () => {
         const permission =
@@ -35,6 +58,30 @@ export default function VideoUploadScreen({
             const asset = result.assets[0];
             setVideoUri(asset.uri);
             setVideoThumb(asset.uri);
+            setVideoName(asset.fileName ?? basenameFromUri(asset.uri));
+            setVideoMime(asset.mimeType ?? null);
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!videoUri || isUploading) return;
+        setIsUploading(true);
+        try {
+            const v = await getVideoUploadUrl(searchId, videoName);
+            await uploadToPresignedUrl(
+                videoUri,
+                v.uploadUrl,
+                videoMime ?? guessContentType(videoName),
+            );
+            await completeVideoUpload(searchId, v.videoId);
+            onNext();
+        } catch (e: any) {
+            Alert.alert(
+                "영상 업로드 실패",
+                e?.message ?? "잠시 후 다시 시도해주세요.",
+            );
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -95,19 +142,23 @@ export default function VideoUploadScreen({
                 </View>
 
                 <Pressable
-                    onPress={onNext}
-                    disabled={!videoUri}
+                    onPress={handleSubmit}
+                    disabled={!videoUri || isUploading}
                     className={`h-12 items-center justify-center rounded-xl ${
-                        videoUri ? "bg-primary" : "bg-gr200/30"
+                        videoUri && !isUploading ? "bg-primary" : "bg-gr200/30"
                     }`}
                 >
-                    <Text
-                        className={`text-lg font-bold ${
-                            videoUri ? "text-bk" : "text-gr200"
-                        }`}
-                    >
-                        다음
-                    </Text>
+                    {isUploading ? (
+                        <ActivityIndicator color="#000" />
+                    ) : (
+                        <Text
+                            className={`text-lg font-bold ${
+                                videoUri ? "text-bk" : "text-gr200"
+                            }`}
+                        >
+                            다음
+                        </Text>
+                    )}
                 </Pressable>
             </ScrollView>
         </SafeAreaView>
