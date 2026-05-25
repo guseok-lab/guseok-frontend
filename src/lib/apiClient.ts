@@ -124,6 +124,38 @@ export async function apiRequest<T = unknown>(
     return data as T;
 }
 
+// 백엔드 공통 응답 포맷: { success, data, error: { code, message } }
+// HTTP 200 이어도 success === false 이면 ApiError 로 던지고, true 면 data 반환.
+export interface EnvelopeError {
+    code: string;
+    message: string;
+}
+export interface Envelope<T> {
+    success: boolean;
+    data: T;
+    error?: EnvelopeError | null;
+}
+
+export function unwrap<T>(envelope: Envelope<T>): T {
+    if (!envelope.success) {
+        const err = envelope.error;
+        throw new ApiError(
+            200,
+            err?.message ?? "요청이 실패했습니다.",
+            envelope,
+        );
+    }
+    return envelope.data;
+}
+
+export async function apiCall<T>(
+    path: string,
+    options: RequestOptions = {},
+): Promise<T> {
+    const envelope = await apiRequest<Envelope<T>>(path, options);
+    return unwrap(envelope);
+}
+
 function safeParseJson(text: string): unknown {
     try {
         return JSON.parse(text);
