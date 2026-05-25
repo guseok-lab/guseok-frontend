@@ -51,7 +51,14 @@
           "locationWhenInUsePermission": "드론 탐색 시 현재 위치를 지도에 표시하기 위해 위치 정보가 필요합니다."
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-secure-store",
+      [
+        "@react-native-seoul/kakao-login",
+        {
+          "kakaoAppKey": "YOUR_KAKAO_NATIVE_APP_KEY"
+        }
+      ]
     ]
   }
 }
