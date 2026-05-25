@@ -11,7 +11,6 @@ import InfoInputRow from "../components/InfoInputRow";
 import RadioGroup from "../components/RadioGroup";
 import UploadRow from "../components/UploadRow";
 import NextButton from "../components/NextButton";
-import DescriptionInput from "../components/DescriptionInput";
 import Section from "../components/Section";
 
 import VideoUploadScreen from "./VideoUploadScreen";
@@ -30,15 +29,9 @@ export default function ExploreScreen() {
 
     const [height, setHeight] = useState("");
     const [weight, setWeight] = useState("");
-    const [bodyType, setBodyType] = useState<"마른" | "보통" | "통통" | null>(
-        null,
-    );
 
     const [appearance, setAppearance] = useState("");
     const [photoUri, setPhotoUri] = useState<string | null>(null);
-
-    const [lastLocation, setLastLocation] = useState("");
-    const [circumstance, setCircumstance] = useState("");
 
     const [searchMethod, setSearchMethod] = useState<
         "영상첨부" | "드론연결" | null
@@ -53,11 +46,8 @@ export default function ExploreScreen() {
         gender !== null &&
         height.trim() !== "" &&
         weight.trim() !== "" &&
-        bodyType !== null &&
         appearance.trim() !== "" &&
         photoUri !== null &&
-        lastLocation.trim() !== "" &&
-        circumstance.trim() !== "" &&
         searchMethod !== null;
 
     const handlePickPhoto = async () => {
@@ -105,11 +95,8 @@ export default function ExploreScreen() {
             gender: gender!,
             height,
             weight,
-            bodyType: bodyType!,
             appearance,
             photoUri: photoUri!,
-            lastLocation,
-            circumstance,
         }
         : null;
 
@@ -131,6 +118,7 @@ export default function ExploreScreen() {
                         label="이름"
                         value={name}
                         onChangeText={setName}
+                        required
                     />
                     <InfoInputRow
                         label="나이"
@@ -139,12 +127,14 @@ export default function ExploreScreen() {
                         unit="세"
                         keyboardType="number-pad"
                         maxLength={3}
+                        required
                     />
                     <RadioGroup
                         label="성별"
                         value={gender}
                         options={["남", "여"]}
                         onChange={setGender}
+                        required
                     />
                 </Section>
 
@@ -156,6 +146,7 @@ export default function ExploreScreen() {
                         unit="cm"
                         keyboardType="number-pad"
                         maxLength={3}
+                        required
                     />
                     <InfoInputRow
                         label="몸무게"
@@ -164,12 +155,7 @@ export default function ExploreScreen() {
                         unit="kg"
                         keyboardType="number-pad"
                         maxLength={3}
-                    />
-                    <RadioGroup
-                        label="체형"
-                        value={bodyType}
-                        options={["마른", "보통", "통통"]}
-                        onChange={setBodyType}
+                        required
                     />
                 </Section>
 
@@ -180,27 +166,13 @@ export default function ExploreScreen() {
                         onChangeText={setAppearance}
                         placeholder="옷차림, 머리 스타일 등을 입력해주세요"
                         fill
+                        required
                     />
                     <UploadRow
                         title="사진 첨부"
                         value={photoUri ? "첨부 완료" : "사진 선택"}
                         onPress={handlePickPhoto}
-                    />
-                </Section>
-
-                <Section title="실종 정황">
-                    <InfoInputRow
-                        label="마지막 위치"
-                        value={lastLocation}
-                        onChangeText={setLastLocation}
-                        placeholder="예) 공주역 인근"
-                        fill
-                    />
-                    <DescriptionInput
-                        title="실종 경위"
-                        value={circumstance}
-                        onChangeText={setCircumstance}
-                        placeholder="언제, 어디서, 어떤 상황이었는지 입력해주세요"
+                        required
                     />
                 </Section>
 
@@ -210,6 +182,7 @@ export default function ExploreScreen() {
                         value={searchMethod}
                         options={["영상첨부", "드론연결"]}
                         onChange={setSearchMethod}
+                        required
                     />
                 </Section>
 

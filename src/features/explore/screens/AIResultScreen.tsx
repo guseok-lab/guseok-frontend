@@ -54,14 +54,10 @@ export default function AIResultScreen({
                         {formData.name} / {formData.age}세 / {formData.gender}
                     </Text>
                     <Text className="text-bk text-base mt-1">
-                        {formData.height}cm / {formData.weight}kg /{" "}
-                        {formData.bodyType}
+                        {formData.height}cm / {formData.weight}kg
                     </Text>
                     <Text className="text-bk text-base mt-1 leading-6">
                         {formData.appearance}
-                    </Text>
-                    <Text className="text-bk text-base mt-1 leading-6">
-                        마지막 위치: {formData.lastLocation}
                     </Text>
                 </View>
             </ScrollView>

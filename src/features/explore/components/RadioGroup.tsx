@@ -6,6 +6,7 @@ interface RadioGroupProps {
     value: string | null;
     options: string[];
     onChange: (value: any) => void;
+    required?: boolean;
 }
 
 export default function RadioGroup({
@@ -13,11 +14,13 @@ export default function RadioGroup({
                                        value,
                                        options,
                                        onChange,
+                                       required = false,
                                    }: RadioGroupProps) {
     return (
         <View className="flex-row items-center mb-4">
             <Text className="w-[90px] text-bk text-lg font-semibold">
                 {label}
+                {required && <Text className="text-point"> *</Text>}
             </Text>
 
             <View className="flex-row gap-8">

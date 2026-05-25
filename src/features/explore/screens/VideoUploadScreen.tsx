@@ -87,13 +87,10 @@ export default function VideoUploadScreen({
                 <View className="bg-wh border border-gr200/40 rounded-xl p-4 mb-8">
                     <Text className="text-bk text-base mb-1">
                         • {formData.gender} / {formData.height}cm /{" "}
-                        {formData.weight}kg / {formData.bodyType}
-                    </Text>
-                    <Text className="text-bk text-base mb-1 leading-6">
-                        • {formData.appearance}
+                        {formData.weight}kg
                     </Text>
                     <Text className="text-bk text-base leading-6">
-                        • {formData.lastLocation}
+                        • {formData.appearance}
                     </Text>
                 </View>
 

@@ -89,7 +89,6 @@ export default function DroneCameraScreen({
                                     longitude: region.longitude,
                                 }}
                                 title={formData.name || "탐색 위치"}
-                                description={formData.lastLocation}
                             />
                         </MapView>
                     ) : (

@@ -44,13 +44,10 @@ export default function DroneConnectScreen({
                 <View className="bg-wh border border-gr200/40 rounded-xl p-4 mb-6">
                     <Text className="text-bk text-base">
                         • {formData.gender} / {formData.height}cm /{" "}
-                        {formData.weight}kg / {formData.bodyType}
+                        {formData.weight}kg
                     </Text>
                     <Text className="text-bk text-base mt-2 leading-6">
                         • {formData.appearance}
-                    </Text>
-                    <Text className="text-bk text-base mt-2 leading-6">
-                        • {formData.lastLocation}
                     </Text>
                 </View>
 
