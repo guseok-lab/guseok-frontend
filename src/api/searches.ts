@@ -42,18 +42,28 @@ export interface VideoCompleteResponse {
     status: SearchStatus;
 }
 
-// 업로드 URL 응답 — 백엔드가 OCI Pre-signed URL 을 그대로 내려준다고 가정.
-// 실제 필드명이 다르면 호출 측에서 키만 바꾸면 됨.
-export interface UploadUrl {
-    uploadUrl: string;
+// OCI Object Storage Presigned PUT URL (10분 유효).
+export interface ImageUploadUrl {
     objectKey: string;
+    uploadUrl: string;
 }
 
-export interface SearchResults {
-    searchId: number;
-    status: SearchStatus;
-    // 결과 페이로드 스키마는 백엔드 확정되면 그때 좁히기.
-    [key: string]: unknown;
+export interface VideoUploadUrl {
+    videoId: number;
+    objectKey: string;
+    uploadUrl: string;
+}
+
+export type ResultType = "VIDEO" | "DRONE" | string;
+export type ResultStatus = "FOUND" | "NOT_FOUND" | string;
+
+export interface SearchResult {
+    resultId: number;
+    resultType: ResultType;
+    status: ResultStatus;
+    accuracy: number;
+    matchedImageUrl: string;
+    matchedTimeSeconds: number;
 }
 
 // 1. 탐색 생성 (비회원 가능)
@@ -84,20 +94,32 @@ export function getSearch(searchId: number): Promise<SearchDetail> {
     return apiCall<SearchDetail>(`/api/v1/searches/${searchId}`);
 }
 
-// 4. 영상 업로드 URL 발급
-export function getVideoUploadUrl(searchId: number): Promise<UploadUrl> {
-    return apiCall<UploadUrl>(
-        `/api/v1/searches/${searchId}/videos/upload-url`,
+// 4. 영상 업로드 URL 발급 — Presigned PUT URL (10분 유효).
+// 반환된 videoId 는 completeVideoUpload 호출 시 사용.
+export function getVideoUploadUrl(
+    searchId: number,
+    originalFilename: string,
+): Promise<VideoUploadUrl> {
+    return apiCall<VideoUploadUrl>(
+        `/api/v1/searches/${searchId}/videos/upload-url?originalFilename=${encodeURIComponent(
+            originalFilename,
+        )}`,
     );
 }
 
-// 5. 분석 결과 조회
-export function getSearchResults(searchId: number): Promise<SearchResults> {
-    return apiCall<SearchResults>(`/api/v1/searches/${searchId}/results`);
+// 5. 분석 결과 조회 — AI 콜백 수신 전에는 빈 배열.
+export function getSearchResults(searchId: number): Promise<SearchResult[]> {
+    return apiCall<SearchResult[]>(`/api/v1/searches/${searchId}/results`);
 }
 
 // 6. 기준 사진 업로드 URL 발급 — 탐색 생성 전에 호출, 받은 objectKey 를 createSearch 의
 // targetImageObjectKey 로 전달.
-export function getImageUploadUrl(): Promise<UploadUrl> {
-    return apiCall<UploadUrl>("/api/v1/searches/image-upload-url");
+export function getImageUploadUrl(
+    originalFilename: string,
+): Promise<ImageUploadUrl> {
+    return apiCall<ImageUploadUrl>(
+        `/api/v1/searches/image-upload-url?originalFilename=${encodeURIComponent(
+            originalFilename,
+        )}`,
+    );
 }
