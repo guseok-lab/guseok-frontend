@@ -68,6 +68,11 @@
         }
       ],
       "./plugins/withFollyCoroutinesFix"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "83e1e741-4cd6-447f-ba95-071e320f7853"
+      }
+    }
   }
 }
