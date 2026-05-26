@@ -18,7 +18,8 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "실종자 사진 및 영상을 첨부하기 위해 사진 라이브러리 접근이 필요합니다.",
         "NSLocationWhenInUseUsageDescription": "드론 탐색 시 현재 위치를 지도에 표시하기 위해 위치 정보가 필요합니다.",
-        "NSMicrophoneUsageDescription": "영상 첨부에 사용되는 영상의 음성을 처리하기 위해 마이크 접근이 필요할 수 있습니다."
+        "NSMicrophoneUsageDescription": "영상 첨부에 사용되는 영상의 음성을 처리하기 위해 마이크 접근이 필요할 수 있습니다.",
+        "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.guseok.app"
     },
@@ -51,7 +52,28 @@
           "locationWhenInUsePermission": "드론 탐색 시 현재 위치를 지도에 표시하기 위해 위치 정보가 필요합니다."
         }
       ],
-      "expo-web-browser"
-    ]
+      "expo-web-browser",
+      "expo-secure-store",
+      [
+        "@react-native-seoul/kakao-login",
+        {
+          "kakaoAppKey": "ed162e9f10265d49cf48ea594ec362a8"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
+        }
+      ],
+      "./plugins/withFollyCoroutinesFix"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "83e1e741-4cd6-447f-ba95-071e320f7853"
+      }
+    }
   }
 }

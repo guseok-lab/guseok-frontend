@@ -11,7 +11,6 @@ import InfoInputRow from "../components/InfoInputRow";
 import RadioGroup from "../components/RadioGroup";
 import UploadRow from "../components/UploadRow";
 import NextButton from "../components/NextButton";
-import DescriptionInput from "../components/DescriptionInput";
 import Section from "../components/Section";
 
 import VideoUploadScreen from "./VideoUploadScreen";
@@ -20,6 +19,13 @@ import DroneConnectScreen from "./DroneConnectScreen";
 import DroneCameraScreen from "./DroneCameraScreen";
 import SwipeBackWrapper from "../../../navigation/components/SwipeBackWrapper";
 import type { MissingPersonForm } from "../../../types/missingPersonForm";
+
+import { createSearch, getImageUploadUrl } from "../../../api/searches";
+import {
+    basenameFromUri,
+    guessContentType,
+    uploadToPresignedUrl,
+} from "../../../lib/upload";
 
 type Flow = "video" | "drone";
 
@@ -30,15 +36,9 @@ export default function ExploreScreen() {
 
     const [height, setHeight] = useState("");
     const [weight, setWeight] = useState("");
-    const [bodyType, setBodyType] = useState<"마른" | "보통" | "통통" | null>(
-        null,
-    );
 
     const [appearance, setAppearance] = useState("");
     const [photoUri, setPhotoUri] = useState<string | null>(null);
-
-    const [lastLocation, setLastLocation] = useState("");
-    const [circumstance, setCircumstance] = useState("");
 
     const [searchMethod, setSearchMethod] = useState<
         "영상첨부" | "드론연결" | null
@@ -46,6 +46,8 @@ export default function ExploreScreen() {
 
     const [activeFlow, setActiveFlow] = useState<Flow | null>(null);
     const [flowStep, setFlowStep] = useState<1 | 2>(1);
+    const [searchId, setSearchId] = useState<number | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isFormValid =
         name.trim() !== "" &&
@@ -53,11 +55,8 @@ export default function ExploreScreen() {
         gender !== null &&
         height.trim() !== "" &&
         weight.trim() !== "" &&
-        bodyType !== null &&
         appearance.trim() !== "" &&
         photoUri !== null &&
-        lastLocation.trim() !== "" &&
-        circumstance.trim() !== "" &&
         searchMethod !== null;
 
     const handlePickPhoto = async () => {
@@ -80,15 +79,47 @@ export default function ExploreScreen() {
         }
     };
 
-    const handleNext = () => {
-        if (!isFormValid) return;
-        setFlowStep(1);
-        setActiveFlow(searchMethod === "영상첨부" ? "video" : "drone");
+    const handleNext = async () => {
+        if (!isFormValid || isSubmitting) return;
+
+        setIsSubmitting(true);
+        try {
+            // 1) 기준 사진 업로드 URL 발급 → OCI 직업로드 → objectKey 획득
+            const photoName = basenameFromUri(photoUri!);
+            const img = await getImageUploadUrl(photoName);
+            await uploadToPresignedUrl(
+                photoUri!,
+                img.uploadUrl,
+                guessContentType(photoName),
+            );
+
+            // 2) 탐색 생성 (objectKey + 폼 데이터)
+            const created = await createSearch({
+                gender: gender === "남" ? "남성" : "여성",
+                height: Number(height),
+                weight: Number(weight),
+                appearance,
+                searchMode: searchMethod === "영상첨부" ? "VIDEO" : "DRONE",
+                targetImageObjectKey: img.objectKey,
+            });
+
+            setSearchId(created.searchId);
+            setFlowStep(1);
+            setActiveFlow(searchMethod === "영상첨부" ? "video" : "drone");
+        } catch (e: any) {
+            Alert.alert(
+                "탐색 생성 실패",
+                e?.message ?? "잠시 후 다시 시도해주세요.",
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const closeFlow = () => {
         setActiveFlow(null);
         setFlowStep(1);
+        setSearchId(null);
     };
 
     const goBack = () => {
@@ -105,11 +136,8 @@ export default function ExploreScreen() {
             gender: gender!,
             height,
             weight,
-            bodyType: bodyType!,
             appearance,
             photoUri: photoUri!,
-            lastLocation,
-            circumstance,
         }
         : null;
 
@@ -131,6 +159,7 @@ export default function ExploreScreen() {
                         label="이름"
                         value={name}
                         onChangeText={setName}
+                        required
                     />
                     <InfoInputRow
                         label="나이"
@@ -139,12 +168,14 @@ export default function ExploreScreen() {
                         unit="세"
                         keyboardType="number-pad"
                         maxLength={3}
+                        required
                     />
                     <RadioGroup
                         label="성별"
                         value={gender}
                         options={["남", "여"]}
                         onChange={setGender}
+                        required
                     />
                 </Section>
 
@@ -156,6 +187,7 @@ export default function ExploreScreen() {
                         unit="cm"
                         keyboardType="number-pad"
                         maxLength={3}
+                        required
                     />
                     <InfoInputRow
                         label="몸무게"
@@ -164,12 +196,7 @@ export default function ExploreScreen() {
                         unit="kg"
                         keyboardType="number-pad"
                         maxLength={3}
-                    />
-                    <RadioGroup
-                        label="체형"
-                        value={bodyType}
-                        options={["마른", "보통", "통통"]}
-                        onChange={setBodyType}
+                        required
                     />
                 </Section>
 
@@ -180,27 +207,13 @@ export default function ExploreScreen() {
                         onChangeText={setAppearance}
                         placeholder="옷차림, 머리 스타일 등을 입력해주세요"
                         fill
+                        required
                     />
                     <UploadRow
                         title="사진 첨부"
                         value={photoUri ? "첨부 완료" : "사진 선택"}
                         onPress={handlePickPhoto}
-                    />
-                </Section>
-
-                <Section title="실종 정황">
-                    <InfoInputRow
-                        label="마지막 위치"
-                        value={lastLocation}
-                        onChangeText={setLastLocation}
-                        placeholder="예) 공주역 인근"
-                        fill
-                    />
-                    <DescriptionInput
-                        title="실종 경위"
-                        value={circumstance}
-                        onChangeText={setCircumstance}
-                        placeholder="언제, 어디서, 어떤 상황이었는지 입력해주세요"
+                        required
                     />
                 </Section>
 
@@ -210,18 +223,21 @@ export default function ExploreScreen() {
                         value={searchMethod}
                         options={["영상첨부", "드론연결"]}
                         onChange={setSearchMethod}
+                        required
                     />
                 </Section>
 
                 <NextButton
-                    title="다음"
+                    title={isSubmitting ? "전송 중..." : "다음"}
                     onPress={handleNext}
-                    disabled={!isFormValid}
+                    disabled={!isFormValid || isSubmitting}
                 />
             </ScrollView>
 
             <Modal
-                visible={activeFlow !== null && formData !== null}
+                visible={
+                    activeFlow !== null && formData !== null && searchId !== null
+                }
                 animationType="slide"
                 onRequestClose={closeFlow}
                 presentationStyle="pageSheet"
@@ -230,35 +246,43 @@ export default function ExploreScreen() {
                     <SwipeBackWrapper onClose={goBack}>
                         {activeFlow === "video" &&
                             flowStep === 1 &&
-                            formData && (
+                            formData &&
+                            searchId !== null && (
                                 <VideoUploadScreen
                                     formData={formData}
+                                    searchId={searchId}
                                     onClose={goBack}
                                     onNext={goNext}
                                 />
                             )}
                         {activeFlow === "video" &&
                             flowStep === 2 &&
-                            formData && (
+                            formData &&
+                            searchId !== null && (
                                 <AIResultScreen
                                     formData={formData}
+                                    searchId={searchId}
                                     onClose={goBack}
                                 />
                             )}
                         {activeFlow === "drone" &&
                             flowStep === 1 &&
-                            formData && (
+                            formData &&
+                            searchId !== null && (
                                 <DroneConnectScreen
                                     formData={formData}
+                                    searchId={searchId}
                                     onClose={goBack}
                                     onNext={goNext}
                                 />
                             )}
                         {activeFlow === "drone" &&
                             flowStep === 2 &&
-                            formData && (
+                            formData &&
+                            searchId !== null && (
                                 <DroneCameraScreen
                                     formData={formData}
+                                    searchId={searchId}
                                     onClose={goBack}
                                 />
                             )}

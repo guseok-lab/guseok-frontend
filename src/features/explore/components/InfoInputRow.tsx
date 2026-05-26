@@ -10,6 +10,24 @@ interface InfoInputRowProps {
     keyboardType?: KeyboardTypeOptions;
     maxLength?: number;
     fill?: boolean;
+    required?: boolean;
+}
+
+function LabelWithRequired({
+    label,
+    required,
+    className,
+}: {
+    label: string;
+    required?: boolean;
+    className: string;
+}) {
+    return (
+        <Text className={className}>
+            {label}
+            {required && <Text className="text-point"> *</Text>}
+        </Text>
+    );
 }
 
 const inputBaseStyle = {
@@ -30,13 +48,16 @@ export default function InfoInputRow({
                                          keyboardType = "default",
                                          maxLength,
                                          fill = false,
+                                         required = false,
                                      }: InfoInputRowProps) {
     if (fill) {
         return (
             <View className="mb-3">
-                <Text className="text-bk text-base font-semibold mb-2">
-                    {label}
-                </Text>
+                <LabelWithRequired
+                    label={label}
+                    required={required}
+                    className="text-bk text-base font-semibold mb-2"
+                />
                 <View className="flex-row items-center bg-wh border border-gr200/40 rounded-xl px-3 h-12">
                     <TextInput
                         value={value}
@@ -57,9 +78,11 @@ export default function InfoInputRow({
 
     return (
         <View className="flex-row items-center mb-3">
-            <Text className="w-[90px] text-bk text-lg font-semibold">
-                {label}
-            </Text>
+            <LabelWithRequired
+                label={label}
+                required={required}
+                className="w-[90px] text-bk text-lg font-semibold"
+            />
 
             <View className="flex-row items-center bg-wh border border-gr200/40 rounded-xl px-3 h-12 w-[130px]">
                 <TextInput

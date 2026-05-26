@@ -7,12 +7,16 @@ import type { MissingPersonForm } from "../../../types/missingPersonForm";
 
 interface DroneConnectScreenProps {
     formData: MissingPersonForm;
+    searchId: number;
     onClose: () => void;
     onNext: () => void;
 }
 
 export default function DroneConnectScreen({
                                                formData,
+                                               // searchId 는 다음 단계(DroneCameraScreen)로 넘기기 위해 받지만
+                                               // 이 화면 자체는 추가 API 호출이 없어 사용하지 않음.
+                                               searchId: _searchId,
                                                onClose,
                                                onNext,
                                            }: DroneConnectScreenProps) {
@@ -44,13 +48,10 @@ export default function DroneConnectScreen({
                 <View className="bg-wh border border-gr200/40 rounded-xl p-4 mb-6">
                     <Text className="text-bk text-base">
                         • {formData.gender} / {formData.height}cm /{" "}
-                        {formData.weight}kg / {formData.bodyType}
+                        {formData.weight}kg
                     </Text>
                     <Text className="text-bk text-base mt-2 leading-6">
                         • {formData.appearance}
-                    </Text>
-                    <Text className="text-bk text-base mt-2 leading-6">
-                        • {formData.lastLocation}
                     </Text>
                 </View>
 

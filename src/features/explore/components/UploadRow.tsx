@@ -5,12 +5,14 @@ interface UploadRowProps {
     title: string;
     value?: string;
     onPress?: () => void;
+    required?: boolean;
 }
 
 export default function UploadRow({
                                       title,
                                       value,
                                       onPress,
+                                      required = false,
                                   }: UploadRowProps) {
     const hasValue = !!value && value !== "사진 선택";
 
@@ -22,6 +24,7 @@ export default function UploadRow({
         >
             <Text className="text-bk text-base font-semibold">
                 {title}
+                {required && <Text className="text-point"> *</Text>}
             </Text>
 
             <View className="flex-row items-center">

@@ -6,8 +6,12 @@ export type RootStackParamList = {
     Faq: undefined;
     Terms: undefined;
     NotificationSetting: undefined;
-    VideoUpload: { formData: MissingPersonForm };
-    DroneConnect: { formData: MissingPersonForm };
-    DroneCamera: { formData: MissingPersonForm };
-    AIResult: { formData: MissingPersonForm; capturedUri?: string };
+    VideoUpload: { formData: MissingPersonForm; searchId: number };
+    DroneConnect: { formData: MissingPersonForm; searchId: number };
+    DroneCamera: { formData: MissingPersonForm; searchId: number };
+    AIResult: {
+        formData: MissingPersonForm;
+        searchId: number;
+        capturedUri?: string;
+    };
 };
