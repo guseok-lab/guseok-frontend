@@ -35,6 +35,15 @@ export default function AIResultScreen({
     const [results, setResults] = useState<SearchResult[] | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [timedOut, setTimedOut] = useState(false);
+    const [attempts, setAttempts] = useState(0);
+    const [elapsedSec, setElapsedSec] = useState(0);
+
+    // 화면이 살아있다는 것을 보이기 위한 카운터 (1초 단위).
+    useEffect(() => {
+        if (results || error || timedOut) return;
+        const t = setInterval(() => setElapsedSec((s) => s + 1), 1000);
+        return () => clearInterval(t);
+    }, [results, error, timedOut]);
 
     useEffect(() => {
         let cancelled = false;
@@ -42,14 +51,19 @@ export default function AIResultScreen({
 
         const tick = async () => {
             if (cancelled) return;
+            setAttempts((n) => n + 1);
             try {
                 const data = await getSearchResults(searchId);
+                console.log(
+                    `[AIResult] poll searchId=${searchId} got ${data.length} result(s)`,
+                );
                 if (cancelled) return;
                 if (data.length > 0) {
                     setResults(data);
                     return; // 결과 도착 → 폴링 종료
                 }
             } catch (e: any) {
+                console.warn("[AIResult] poll error", e?.message ?? e);
                 if (cancelled) return;
                 setError(e?.message ?? "결과 조회 실패");
                 return;
@@ -89,7 +103,7 @@ export default function AIResultScreen({
                 </Text>
                 <Text className="text-gr200 text-sm text-center mt-2 mb-6 leading-5">
                     {results === null && !error && !timedOut
-                        ? "AI 분석이 끝나면 결과가 표시됩니다"
+                        ? `AI 분석이 끝나면 결과가 표시됩니다\n경과 ${elapsedSec}초 · 조회 ${attempts}회`
                         : "AI 분석을 통해 일치 가능성이 높은 장면을 찾았어요"}
                 </Text>
 
