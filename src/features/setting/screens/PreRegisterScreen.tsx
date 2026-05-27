@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
+import type { ImagePickerAsset } from "expo-image-picker";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
 import Section from "../../explore/components/Section";
@@ -11,28 +12,54 @@ import UploadRow from "../../explore/components/UploadRow";
 import DescriptionInput from "../../explore/components/DescriptionInput";
 import ConfirmModal from "../components/ConfirmModal";
 
+import {
+    createMissingPerson,
+    getMissingPersonImageUploadUrl,
+    type BodyType,
+    type Gender,
+} from "../../../api/missingPersons";
+import {
+    basenameFromUri,
+    guessContentType,
+    uploadToPresignedUrl,
+} from "../../../lib/upload";
+
 interface PreRegisterScreenProps {
     onClose?: () => void;
 }
 
+type GenderKr = "남" | "여";
+type BodyTypeKr = "마른" | "보통" | "통통";
+
+const GENDER_MAP: Record<GenderKr, Gender> = {
+    "남": "MALE",
+    "여": "FEMALE",
+};
+
+const BODY_TYPE_MAP: Record<BodyTypeKr, BodyType> = {
+    "마른": "THIN",
+    "보통": "NORMAL",
+    "통통": "CHUBBY",
+};
+
 export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
     const [name, setName] = useState("");
     const [age, setAge] = useState("");
-    const [gender, setGender] = useState<"남" | "여" | null>(null);
+    const [gender, setGender] = useState<GenderKr | null>(null);
 
     const [height, setHeight] = useState("");
     const [weight, setWeight] = useState("");
-    const [bodyType, setBodyType] = useState<"마른" | "보통" | "통통" | null>(
-        null,
-    );
+    const [bodyType, setBodyType] = useState<BodyTypeKr | null>(null);
 
     const [appearance, setAppearance] = useState("");
-    const [photoUri, setPhotoUri] = useState<string | null>(null);
+    const [photoAsset, setPhotoAsset] = useState<ImagePickerAsset | null>(null);
 
     const [lastLocation, setLastLocation] = useState("");
     const [circumstance, setCircumstance] = useState("");
+    const [contact, setContact] = useState("");
 
     const [modalVisible, setModalVisible] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const hasAny =
         name.trim() !== "" ||
@@ -42,9 +69,10 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
         weight.trim() !== "" ||
         bodyType !== null ||
         appearance.trim() !== "" ||
-        photoUri !== null ||
+        photoAsset !== null ||
         lastLocation.trim() !== "" ||
-        circumstance.trim() !== "";
+        circumstance.trim() !== "" ||
+        contact.trim() !== "";
 
     const isAllValid =
         name.trim() !== "" &&
@@ -54,9 +82,10 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
         weight.trim() !== "" &&
         bodyType !== null &&
         appearance.trim() !== "" &&
-        photoUri !== null &&
+        photoAsset !== null &&
         lastLocation.trim() !== "" &&
-        circumstance.trim() !== "";
+        circumstance.trim() !== "" &&
+        contact.trim() !== "";
 
     const handlePickPhoto = async () => {
         const permission =
@@ -70,7 +99,7 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
             quality: 0.8,
         });
         if (!result.canceled) {
-            setPhotoUri(result.assets[0].uri);
+            setPhotoAsset(result.assets[0]);
         }
     };
 
@@ -82,9 +111,44 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
         setModalVisible(true);
     };
 
-    const handleConfirm = () => {
-        setModalVisible(false);
-        Alert.alert("등록되었습니다", "홈 화면에 노출됩니다.");
+    const handleConfirm = async () => {
+        if (isSubmitting) return;
+        if (!isAllValid || !gender || !bodyType || !photoAsset) return;
+
+        setIsSubmitting(true);
+        try {
+            const filename =
+                photoAsset.fileName ?? basenameFromUri(photoAsset.uri);
+            const contentType =
+                photoAsset.mimeType ?? guessContentType(filename);
+
+            const { objectKey, uploadUrl } =
+                await getMissingPersonImageUploadUrl(filename);
+            await uploadToPresignedUrl(photoAsset.uri, uploadUrl, contentType);
+
+            await createMissingPerson({
+                name: name.trim(),
+                age: Number(age),
+                gender: GENDER_MAP[gender],
+                height: Number(height),
+                weight: Number(weight),
+                bodyType: BODY_TYPE_MAP[bodyType],
+                appearanceDescription: appearance.trim(),
+                lastLocation: lastLocation.trim(),
+                missingCircumstance: circumstance.trim(),
+                contact: contact.trim(),
+                photoObjectKey: objectKey,
+            });
+
+            setModalVisible(false);
+            Alert.alert("등록되었습니다", "홈 화면에 노출됩니다.", [
+                { text: "확인", onPress: onClose },
+            ]);
+        } catch (e: any) {
+            Alert.alert("등록 실패", e?.message ?? "다시 시도해주세요.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -153,7 +217,7 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
                     />
                     <UploadRow
                         title="사진 첨부"
-                        value={photoUri ? "첨부 완료" : "사진 선택"}
+                        value={photoAsset ? "첨부 완료" : "사진 선택"}
                         onPress={handlePickPhoto}
                     />
                 </Section>
@@ -172,6 +236,14 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
                         onChangeText={setCircumstance}
                         placeholder="언제, 어디서, 어떤 상황이었는지 입력해주세요"
                     />
+                    <InfoInputRow
+                        label="연락처"
+                        value={contact}
+                        onChangeText={setContact}
+                        placeholder="010-0000-0000"
+                        keyboardType="phone-pad"
+                        fill
+                    />
                 </Section>
 
                 <Text className="text-bk text-sm leading-5 mt-6">
@@ -182,7 +254,7 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
                 <View className="flex-row gap-3 mt-4">
                     <Pressable
                         onPress={handlePublish}
-                        disabled={!isAllValid}
+                        disabled={!isAllValid || isSubmitting}
                         className={`flex-1 h-12 items-center justify-center rounded-xl ${
                             isAllValid ? "bg-primary" : "bg-gr200/30"
                         }`}
@@ -198,7 +270,7 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
 
                     <Pressable
                         onPress={handleSaveDraft}
-                        disabled={!hasAny}
+                        disabled={!hasAny || isSubmitting}
                         className={`flex-1 h-12 items-center justify-center rounded-xl border ${
                             hasAny
                                 ? "border-primary bg-wh"
@@ -218,7 +290,7 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
 
             <ConfirmModal
                 visible={modalVisible}
-                photoUri={photoUri}
+                photoUri={photoAsset?.uri ?? null}
                 name={name}
                 age={age}
                 appearance={appearance}
