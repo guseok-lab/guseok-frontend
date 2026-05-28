@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Image, Text, View } from "react-native";
 
 import type {
@@ -6,6 +6,7 @@ import type {
     Gender,
     MissingPerson,
 } from "../../../api/missingPersons";
+import ContactModal from "./ContactModal";
 import InfoRow from "./InfoRow";
 import MissingDayBadge from "./MissingDayBadge";
 import ReportButton from "./ReportButton";
@@ -30,13 +31,17 @@ interface MissingPersonCardProps {
 }
 
 export default function MissingPersonCard({ item }: MissingPersonCardProps) {
+    const [contactVisible, setContactVisible] = useState(false);
+    const [photoFailed, setPhotoFailed] = useState(false);
+
     return (
         <View className="flex-row items-stretch mb-6">
-            {item.photoUrl ? (
+            {item.photoUrl && !photoFailed ? (
                 <Image
                     source={{ uri: item.photoUrl }}
                     className="w-[140px] aspect-square rounded-xl mr-4"
                     resizeMode="cover"
+                    onError={() => setPhotoFailed(true)}
                 />
             ) : (
                 <View className="w-[140px] aspect-square rounded-xl bg-gr200 mr-4" />
@@ -100,8 +105,15 @@ export default function MissingPersonCard({ item }: MissingPersonCardProps) {
                     value={item.missingCircumstance}
                 />
 
-                <ReportButton />
+                <ReportButton onPress={() => setContactVisible(true)} />
             </View>
+
+            <ContactModal
+                visible={contactVisible}
+                name={item.name}
+                contact={item.contact}
+                onClose={() => setContactVisible(false)}
+            />
         </View>
     );
 }
