@@ -4,10 +4,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
 import type { MissingPersonForm } from "../../../types/missingPersonForm";
+import MjpegPlayer from "../components/MjpegPlayer";
 
 interface DroneCameraScreenProps {
     formData: MissingPersonForm;
     searchId: number;
+    streamUrl: string;
     onClose: () => void;
 }
 
@@ -35,6 +37,7 @@ try {
 export default function DroneCameraScreen({
                                               formData,
                                               searchId: _searchId,
+                                              streamUrl,
                                               onClose,
                                           }: DroneCameraScreenProps) {
     const [region, setRegion] = useState<Region | null>(null);
@@ -69,13 +72,19 @@ export default function DroneCameraScreen({
             <DetailHeader onBack={onClose} />
 
             <View className="flex-1 px-5 pb-4">
-                <View className="w-full h-[36%] rounded-xl bg-gr200/40 items-center justify-center mb-4 overflow-hidden">
-                    <Text className="text-bk text-lg font-semibold">
-                        드론 카메라
-                    </Text>
-                    <Text className="text-gr200 text-xs mt-1">
-                        드론 영상 (AI 연동 예정)
-                    </Text>
+                <View className="w-full h-[36%] rounded-xl bg-black mb-4 overflow-hidden">
+                    {streamUrl ? (
+                        <MjpegPlayer
+                            streamUrl={streamUrl}
+                            style={{ flex: 1 }}
+                        />
+                    ) : (
+                        <View className="flex-1 items-center justify-center">
+                            <Text className="text-gr200 text-xs">
+                                스트림 URL이 없습니다.
+                            </Text>
+                        </View>
+                    )}
                 </View>
 
                 <View className="flex-1 rounded-xl overflow-hidden bg-gr200/40">

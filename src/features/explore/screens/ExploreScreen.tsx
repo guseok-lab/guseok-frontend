@@ -47,6 +47,7 @@ export default function ExploreScreen() {
     const [activeFlow, setActiveFlow] = useState<Flow | null>(null);
     const [flowStep, setFlowStep] = useState<1 | 2>(1);
     const [searchId, setSearchId] = useState<number | null>(null);
+    const [droneStreamUrl, setDroneStreamUrl] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isFormValid =
@@ -120,6 +121,7 @@ export default function ExploreScreen() {
         setActiveFlow(null);
         setFlowStep(1);
         setSearchId(null);
+        setDroneStreamUrl(null);
     };
 
     const goBack = () => {
@@ -273,16 +275,21 @@ export default function ExploreScreen() {
                                     formData={formData}
                                     searchId={searchId}
                                     onClose={goBack}
-                                    onNext={goNext}
+                                    onConnected={(url) => {
+                                        setDroneStreamUrl(url);
+                                        goNext();
+                                    }}
                                 />
                             )}
                         {activeFlow === "drone" &&
                             flowStep === 2 &&
                             formData &&
-                            searchId !== null && (
+                            searchId !== null &&
+                            droneStreamUrl && (
                                 <DroneCameraScreen
                                     formData={formData}
                                     searchId={searchId}
+                                    streamUrl={droneStreamUrl}
                                     onClose={goBack}
                                 />
                             )}
