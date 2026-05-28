@@ -1,5 +1,12 @@
-import React, { useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+    ActivityIndicator,
+    Alert,
+    Pressable,
+    ScrollView,
+    Text,
+    View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import type { ImagePickerAsset } from "expo-image-picker";
@@ -11,12 +18,16 @@ import RadioGroup from "../../explore/components/RadioGroup";
 import UploadRow from "../../explore/components/UploadRow";
 import DescriptionInput from "../../explore/components/DescriptionInput";
 import ConfirmModal from "../components/ConfirmModal";
+import RegisteredMissingPerson from "../components/RegisteredMissingPerson";
 
 import {
     createMissingPerson,
+    deleteMissingPerson,
     getMissingPersonImageUploadUrl,
+    getMyMissingPersons,
     type BodyType,
     type Gender,
+    type MissingPerson,
 } from "../../../api/missingPersons";
 import {
     basenameFromUri,
@@ -60,6 +71,42 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // 단일 등록 토글: 내가 등록한 실종자가 있으면 폼 대신 등록 카드 + 삭제만 노출.
+    const [isLoading, setIsLoading] = useState(true);
+    const [myEntry, setMyEntry] = useState<MissingPerson | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                const list = await getMyMissingPersons();
+                if (mounted && list.length > 0) setMyEntry(list[0]);
+            } catch {
+                // 조회 실패 시엔 폼을 노출(이 화면은 로그인 가드 안에서만 열림).
+            } finally {
+                if (mounted) setIsLoading(false);
+            }
+        })();
+        return () => {
+            mounted = false;
+        };
+    }, []);
+
+    const resetForm = () => {
+        setName("");
+        setAge("");
+        setGender(null);
+        setHeight("");
+        setWeight("");
+        setBodyType(null);
+        setAppearance("");
+        setPhotoAsset(null);
+        setLastLocation("");
+        setCircumstance("");
+        setContact("");
+    };
 
     const hasAny =
         name.trim() !== "" ||
@@ -126,7 +173,7 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
                 await getMissingPersonImageUploadUrl(filename);
             await uploadToPresignedUrl(photoAsset.uri, uploadUrl, contentType);
 
-            await createMissingPerson({
+            const created = await createMissingPerson({
                 name: name.trim(),
                 age: Number(age),
                 gender: GENDER_MAP[gender],
@@ -141,15 +188,69 @@ export default function PreRegisterScreen({ onClose }: PreRegisterScreenProps) {
             });
 
             setModalVisible(false);
-            Alert.alert("등록되었습니다", "홈 화면에 노출됩니다.", [
-                { text: "확인", onPress: onClose },
-            ]);
+            setMyEntry(created);
+            resetForm();
+            Alert.alert("등록되었습니다", "홈 화면에 노출됩니다.");
         } catch (e: any) {
             Alert.alert("등록 실패", e?.message ?? "다시 시도해주세요.");
         } finally {
             setIsSubmitting(false);
         }
     };
+
+    const doDelete = async () => {
+        if (!myEntry || isDeleting) return;
+        setIsDeleting(true);
+        try {
+            await deleteMissingPerson(myEntry.missingPersonId);
+            setMyEntry(null);
+            Alert.alert("삭제되었습니다", "홈 화면 노출이 중단됐어요.");
+        } catch (e: any) {
+            Alert.alert("삭제 실패", e?.message ?? "다시 시도해주세요.");
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const handleDelete = () => {
+        Alert.alert("홈화면에서 삭제", "등록한 실종자 정보를 삭제할까요?", [
+            { text: "취소", style: "cancel" },
+            { text: "삭제", style: "destructive", onPress: doDelete },
+        ]);
+    };
+
+    if (isLoading) {
+        return (
+            <SafeAreaView className="flex-1 bg-bg">
+                <DetailHeader title="실종자 사전 등록" onBack={onClose} />
+                <View className="flex-1 items-center justify-center">
+                    <ActivityIndicator />
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    if (myEntry) {
+        return (
+            <SafeAreaView className="flex-1 bg-bg">
+                <DetailHeader title="실종자 사전 등록" onBack={onClose} />
+                <ScrollView
+                    className="flex-1 px-5"
+                    contentContainerClassName="pt-4 pb-32"
+                    showsVerticalScrollIndicator={false}
+                >
+                    <Text className="text-bk text-base font-semibold mb-4">
+                        홈 화면에 노출 중인 실종자예요
+                    </Text>
+                    <RegisteredMissingPerson
+                        entry={myEntry}
+                        onDelete={handleDelete}
+                        isDeleting={isDeleting}
+                    />
+                </ScrollView>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView className="flex-1 bg-bg">

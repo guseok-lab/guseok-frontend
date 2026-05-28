@@ -70,6 +70,15 @@ export function getMyMissingPersons(): Promise<MissingPerson[]> {
     return apiCall<MissingPerson[]>("/api/v1/missing-persons/me");
 }
 
+// 인증 필요. 내가 등록한 실종자 정보 삭제(홈 화면 노출 해제).
+export function deleteMissingPerson(
+    missingPersonId: number,
+): Promise<string> {
+    return apiCall<string>(`/api/v1/missing-persons/${missingPersonId}`, {
+        method: "DELETE",
+    });
+}
+
 // 인증 필요. 10분 유효 Presigned PUT URL 발급.
 export function getMissingPersonImageUploadUrl(
     originalFilename: string,
