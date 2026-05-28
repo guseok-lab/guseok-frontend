@@ -45,8 +45,9 @@ export default function ExploreScreen() {
     >(null);
 
     const [activeFlow, setActiveFlow] = useState<Flow | null>(null);
-    const [flowStep, setFlowStep] = useState<1 | 2>(1);
+    const [flowStep, setFlowStep] = useState<1 | 2 | 3>(1);
     const [searchId, setSearchId] = useState<number | null>(null);
+    const [droneStreamUrl, setDroneStreamUrl] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isFormValid =
@@ -120,14 +121,16 @@ export default function ExploreScreen() {
         setActiveFlow(null);
         setFlowStep(1);
         setSearchId(null);
+        setDroneStreamUrl(null);
     };
 
     const goBack = () => {
-        if (flowStep > 1) setFlowStep((flowStep - 1) as 1);
+        if (flowStep > 1) setFlowStep((flowStep - 1) as 1 | 2);
         else closeFlow();
     };
 
-    const goNext = () => setFlowStep(2);
+    const goNext = () =>
+        setFlowStep((s) => (s < 3 ? ((s + 1) as 1 | 2 | 3) : s));
 
     const formData: MissingPersonForm | null = isFormValid
         ? {
@@ -263,6 +266,7 @@ export default function ExploreScreen() {
                                     formData={formData}
                                     searchId={searchId}
                                     onClose={goBack}
+                                    onComplete={closeFlow}
                                 />
                             )}
                         {activeFlow === "drone" &&
@@ -273,17 +277,34 @@ export default function ExploreScreen() {
                                     formData={formData}
                                     searchId={searchId}
                                     onClose={goBack}
-                                    onNext={goNext}
+                                    onConnected={(url) => {
+                                        setDroneStreamUrl(url);
+                                        goNext();
+                                    }}
                                 />
                             )}
                         {activeFlow === "drone" &&
                             flowStep === 2 &&
                             formData &&
-                            searchId !== null && (
+                            searchId !== null &&
+                            droneStreamUrl && (
                                 <DroneCameraScreen
                                     formData={formData}
                                     searchId={searchId}
+                                    streamUrl={droneStreamUrl}
                                     onClose={goBack}
+                                    onFinish={goNext}
+                                />
+                            )}
+                        {activeFlow === "drone" &&
+                            flowStep === 3 &&
+                            formData &&
+                            searchId !== null && (
+                                <AIResultScreen
+                                    formData={formData}
+                                    searchId={searchId}
+                                    onClose={goBack}
+                                    onComplete={closeFlow}
                                 />
                             )}
                     </SwipeBackWrapper>

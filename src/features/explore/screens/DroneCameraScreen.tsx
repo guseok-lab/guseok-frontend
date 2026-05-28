@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Text, View } from "react-native";
+import {
+    ActivityIndicator,
+    Alert,
+    Pressable,
+    Text,
+    View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
 import type { MissingPersonForm } from "../../../types/missingPersonForm";
+import MjpegPlayer from "../components/MjpegPlayer";
+import { disconnectDrone } from "../../../api/drones";
 
 interface DroneCameraScreenProps {
     formData: MissingPersonForm;
     searchId: number;
+    streamUrl: string;
     onClose: () => void;
+    // 탐색 종료 → 드론 연결 해제 후 결과 화면으로 이동.
+    onFinish: () => void;
 }
 
 interface Region {
@@ -34,11 +45,24 @@ try {
 
 export default function DroneCameraScreen({
                                               formData,
-                                              searchId: _searchId,
+                                              searchId,
+                                              streamUrl,
                                               onClose,
+                                              onFinish,
                                           }: DroneCameraScreenProps) {
     const [region, setRegion] = useState<Region | null>(null);
+    const [isFinishing, setIsFinishing] = useState(false);
     const hasNativeMap = !!MapView && !!Location;
+
+    const handleFinish = async () => {
+        if (isFinishing) return;
+        setIsFinishing(true);
+        // 드론 연결 해제는 best-effort(실패해도 결과 화면으로 진행).
+        try {
+            await disconnectDrone(searchId);
+        } catch {}
+        onFinish();
+    };
 
     useEffect(() => {
         if (!hasNativeMap) return;
@@ -69,13 +93,19 @@ export default function DroneCameraScreen({
             <DetailHeader onBack={onClose} />
 
             <View className="flex-1 px-5 pb-4">
-                <View className="w-full h-[36%] rounded-xl bg-gr200/40 items-center justify-center mb-4 overflow-hidden">
-                    <Text className="text-bk text-lg font-semibold">
-                        드론 카메라
-                    </Text>
-                    <Text className="text-gr200 text-xs mt-1">
-                        드론 영상 (AI 연동 예정)
-                    </Text>
+                <View className="w-full h-[36%] rounded-xl bg-black mb-4 overflow-hidden">
+                    {streamUrl ? (
+                        <MjpegPlayer
+                            streamUrl={streamUrl}
+                            style={{ flex: 1 }}
+                        />
+                    ) : (
+                        <View className="flex-1 items-center justify-center">
+                            <Text className="text-gr200 text-xs">
+                                스트림 URL이 없습니다.
+                            </Text>
+                        </View>
+                    )}
                 </View>
 
                 <View className="flex-1 rounded-xl overflow-hidden bg-gr200/40">
@@ -106,6 +136,21 @@ export default function DroneCameraScreen({
                         </View>
                     )}
                 </View>
+
+                <Pressable
+                    onPress={handleFinish}
+                    disabled={isFinishing}
+                    className="h-12 items-center justify-center rounded-xl bg-primary mt-3"
+                    style={{ opacity: isFinishing ? 0.6 : 1 }}
+                >
+                    {isFinishing ? (
+                        <ActivityIndicator color="#000" />
+                    ) : (
+                        <Text className="text-bk text-lg font-bold">
+                            탐색 종료
+                        </Text>
+                    )}
+                </Pressable>
             </View>
         </SafeAreaView>
     );

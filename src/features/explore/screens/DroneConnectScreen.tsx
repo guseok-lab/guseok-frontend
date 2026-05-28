@@ -1,25 +1,57 @@
-import React from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import React, { useState } from "react";
+import {
+    ActivityIndicator,
+    Alert,
+    Pressable,
+    ScrollView,
+    Text,
+    View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import DetailHeader from "../../../navigation/components/DetailHeader";
 import type { MissingPersonForm } from "../../../types/missingPersonForm";
+import { connectDrone, resolveStreamUrl } from "../../../api/drones";
 
 interface DroneConnectScreenProps {
     formData: MissingPersonForm;
     searchId: number;
     onClose: () => void;
-    onNext: () => void;
+    onConnected: (streamUrl: string) => void;
 }
 
 export default function DroneConnectScreen({
-                                               formData,
-                                               // searchId 는 다음 단계(DroneCameraScreen)로 넘기기 위해 받지만
-                                               // 이 화면 자체는 추가 API 호출이 없어 사용하지 않음.
-                                               searchId: _searchId,
-                                               onClose,
-                                               onNext,
-                                           }: DroneConnectScreenProps) {
+    formData,
+    searchId,
+    onClose,
+    onConnected,
+}: DroneConnectScreenProps) {
+    const [isConnecting, setIsConnecting] = useState(false);
+
+    const handleConnect = async () => {
+        if (isConnecting) return;
+        setIsConnecting(true);
+        try {
+            const result = await connectDrone(searchId);
+            const url = resolveStreamUrl(result.streamUrl);
+            if (result.status !== "CONNECTED" || !url) {
+                Alert.alert(
+                    "드론 연결 대기",
+                    "연결된 드론을 찾지 못했어요. 드론(노트북)이 실행 중인지 확인 후 다시 시도해주세요.",
+                );
+                return;
+            }
+            onConnected(url);
+        } catch (e: any) {
+            Alert.alert(
+                "드론 연결 실패",
+                e?.message ?? "잠시 후 다시 시도해주세요.",
+            );
+        } finally {
+            setIsConnecting(false);
+        }
+    };
+
     return (
         <SafeAreaView className="flex-1 bg-bg">
             <DetailHeader title="드론 연결" onBack={onClose} />
@@ -36,7 +68,7 @@ export default function DroneConnectScreen({
                 <View className="flex-row items-center justify-between mb-3 px-1">
                     <Text className="text-bk text-lg font-bold">드론</Text>
                     <Text className="text-bk text-base underline">
-                        이름 어쩌구저쩌구
+                        드론 노트북 실행 후 연결
                     </Text>
                 </View>
                 <View className="h-px bg-gr200/40 mb-6" />
@@ -60,10 +92,18 @@ export default function DroneConnectScreen({
                 </View>
 
                 <Pressable
-                    onPress={onNext}
+                    onPress={handleConnect}
+                    disabled={isConnecting}
                     className="h-12 items-center justify-center rounded-xl bg-primary"
+                    style={{ opacity: isConnecting ? 0.6 : 1 }}
                 >
-                    <Text className="text-bk text-lg font-bold">다음</Text>
+                    {isConnecting ? (
+                        <ActivityIndicator color="#000" />
+                    ) : (
+                        <Text className="text-bk text-lg font-bold">
+                            드론 연결
+                        </Text>
+                    )}
                 </Pressable>
             </ScrollView>
         </SafeAreaView>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     Image,
+    Pressable,
     ScrollView,
     Text,
     View,
@@ -21,6 +22,8 @@ interface AIResultScreenProps {
     searchId: number;
     capturedUri?: string;
     onClose: () => void;
+    // 제공되면 결과 화면 하단에 "완료" 버튼을 띄우고, 누르면 전체 플로우를 닫는다.
+    onComplete?: () => void;
 }
 
 const POLL_INTERVAL_MS = 3000;
@@ -31,6 +34,7 @@ export default function AIResultScreen({
     searchId,
     capturedUri,
     onClose,
+    onComplete,
 }: AIResultScreenProps) {
     const [results, setResults] = useState<SearchResult[] | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -157,6 +161,15 @@ export default function AIResultScreen({
                         {formData.appearance}
                     </Text>
                 </View>
+
+                {onComplete && (
+                    <Pressable
+                        onPress={onComplete}
+                        className="h-12 items-center justify-center rounded-xl bg-primary mt-8"
+                    >
+                        <Text className="text-bk text-lg font-bold">완료</Text>
+                    </Pressable>
+                )}
             </ScrollView>
         </SafeAreaView>
     );
