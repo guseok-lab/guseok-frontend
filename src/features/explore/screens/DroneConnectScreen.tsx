@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
     ActivityIndicator,
     Alert,
+    Image,
     Pressable,
     ScrollView,
     Text,
@@ -87,8 +88,16 @@ export default function DroneConnectScreen({
                     </Text>
                 </View>
 
-                <View className="w-full aspect-video rounded-xl bg-gr200/40 items-center justify-center mb-8">
-                    <Text className="text-gr200 text-base">사진</Text>
+                <View className="w-full aspect-video rounded-xl bg-gr200/40 items-center justify-center mb-8 overflow-hidden">
+                    {formData.photoUri ? (
+                        <Image
+                            source={{ uri: formData.photoUri }}
+                            className="w-full h-full"
+                            resizeMode="contain"
+                        />
+                    ) : (
+                        <Text className="text-gr200 text-base">사진</Text>
+                    )}
                 </View>
 
                 <Pressable
