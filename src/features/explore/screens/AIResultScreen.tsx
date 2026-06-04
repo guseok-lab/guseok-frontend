@@ -116,7 +116,7 @@ export default function AIResultScreen({
                         <Image
                             source={{ uri: previewUri }}
                             className="w-full h-full"
-                            resizeMode="cover"
+                            resizeMode="contain"
                         />
                     ) : results === null && !error && !timedOut ? (
                         <ActivityIndicator color="#000" />
