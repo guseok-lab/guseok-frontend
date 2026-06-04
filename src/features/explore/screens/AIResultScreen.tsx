@@ -27,7 +27,7 @@ interface AIResultScreenProps {
 }
 
 const POLL_INTERVAL_MS = 3000;
-const POLL_TIMEOUT_MS = 3 * 60 * 1000; // 3분
+const POLL_TIMEOUT_MS = 10 * 60 * 1000; // 10분
 
 export default function AIResultScreen({
     formData,
@@ -41,6 +41,17 @@ export default function AIResultScreen({
     const [timedOut, setTimedOut] = useState(false);
     const [attempts, setAttempts] = useState(0);
     const [elapsedSec, setElapsedSec] = useState(0);
+    // "다시 조회하기" 트리거 — 증가하면 폴링 useEffect 가 재실행됨.
+    const [retryNonce, setRetryNonce] = useState(0);
+
+    const handleRetry = () => {
+        setResults(null);
+        setError(null);
+        setTimedOut(false);
+        setAttempts(0);
+        setElapsedSec(0);
+        setRetryNonce((n) => n + 1);
+    };
 
     // 화면이 살아있다는 것을 보이기 위한 카운터 (1초 단위).
     useEffect(() => {
@@ -84,7 +95,7 @@ export default function AIResultScreen({
         return () => {
             cancelled = true;
         };
-    }, [searchId]);
+    }, [searchId, retryNonce]);
 
     const first = results?.[0];
     const previewUri = first?.matchedImageUrl || capturedUri;
@@ -130,6 +141,17 @@ export default function AIResultScreen({
                         </Text>
                     )}
                 </View>
+
+                {(timedOut || error) && !results && (
+                    <Pressable
+                        onPress={handleRetry}
+                        className="h-12 items-center justify-center rounded-xl border border-primary bg-wh mb-4"
+                    >
+                        <Text className="text-bk text-base font-bold">
+                            다시 조회하기
+                        </Text>
+                    </Pressable>
+                )}
 
                 {first && (
                     <View className="bg-wh border border-gr200/40 rounded-xl p-4 mb-4">
