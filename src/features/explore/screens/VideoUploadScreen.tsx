@@ -66,23 +66,10 @@ export default function VideoUploadScreen({
     const handleSubmit = async () => {
         if (!videoUri || isUploading) return;
         setIsUploading(true);
-        try {
-            const v = await getVideoUploadUrl(searchId, videoName);
-            await uploadToPresignedUrl(
-                videoUri,
-                v.uploadUrl,
-                videoMime ?? guessContentType(videoName),
-            );
-            await completeVideoUpload(searchId, v.videoId);
-            onNext();
-        } catch (e: any) {
-            Alert.alert(
-                "영상 업로드 실패",
-                e?.message ?? "잠시 후 다시 시도해주세요.",
-            );
-        } finally {
-            setIsUploading(false);
-        }
+        // DEMO HACK: 실제 업로드/탐색 호출 건너뛰고 10초 대기 후 결과 화면으로 진입.
+        // 결과는 ExploreScreen 에서 고정 searchId(90) 로 받음.
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+        onNext();
     };
 
     return (

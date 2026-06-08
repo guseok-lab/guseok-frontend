@@ -264,7 +264,9 @@ export default function ExploreScreen() {
                             searchId !== null && (
                                 <AIResultScreen
                                     formData={formData}
-                                    searchId={searchId}
+                                    // DEMO HACK: 영상 결과 데모용으로 고정 searchId(90) 사용.
+                                    // 복구 시 searchId={searchId} 로 되돌릴 것.
+                                    searchId={90}
                                     onClose={goBack}
                                     onComplete={closeFlow}
                                 />
